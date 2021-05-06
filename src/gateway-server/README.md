@@ -1,6 +1,6 @@
 # Azure IoT Hub AMQP Server Gateway Sample
 
-Travis: [![Travis](https://travis-ci.org/fbeltrao/IoTHubGateway.svg?branch=master)](https://travis-ci.org/fbeltrao/IoTHubGateway)
+Original source code from [Francisco Beltrao](https://github.com/fbeltrao/IoTHubGateway)
 
 ## Introduction
 
