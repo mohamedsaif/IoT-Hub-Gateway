@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: FunctionsStartup(typeof(gateway_translator.Startup))]
-namespace gateway_translator
+[assembly: FunctionsStartup(typeof(GatewayTranslator.Startup))]
+namespace GatewayTranslator
 {
     public class Startup : FunctionsStartup
     {

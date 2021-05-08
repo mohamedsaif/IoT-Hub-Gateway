@@ -2,12 +2,12 @@ using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using gateway_translator.Utils;
+using GatewayTranslator.Utils;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 
-namespace gateway_translator
+namespace GatewayTranslator
 {
     public class GatewayTranslator
     {
