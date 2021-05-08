@@ -13,7 +13,7 @@ namespace gateway_translator
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            
+            builder.Services.AddHttpClient();
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IoTHubGateway.Server.Controllers
 {
-    [Route("api")]
+    [Route("iot-gateway")]
     public class GatewayController : Controller
     {
         private readonly IGatewayService gatewayService;
