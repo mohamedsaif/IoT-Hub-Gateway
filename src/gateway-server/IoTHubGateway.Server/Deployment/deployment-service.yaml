@@ -1,0 +1,14 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-server-http-service
+  namespace: iot-hub-gateway
+spec:
+  selector:
+    app: gateway-server-http
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+---

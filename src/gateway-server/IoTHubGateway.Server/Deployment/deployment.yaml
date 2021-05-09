@@ -1,0 +1,55 @@
+﻿---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-server-deployment
+  namespace: iot-hub-gateway
+  labels:
+    app: gateway-server-http
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: gateway-server-http
+  template:
+    metadata:
+      labels:
+        app: gateway-server-http
+    spec:
+      containers:
+      - name: gateway-server
+        image: REPLACE-ACR-NAME.azurecr.io/iothub/gateway-server:1.0.2
+        env:
+        # - name: IoTHubHostName
+        #   value: REPLACE-IOTHUB-NAME.azure-devices.net
+        # - name: AccessPolicyName
+        #   value: REPLACE-POLICY-NAME
+        # - name: AccessPolicyKey
+        #   value: "REPLACE-POLICY-KEY"
+        - name: SharedAccessPolicyKeyEnabled
+          value: "true"
+        - name: DirectMethodEnabled
+          value: "true"
+        - name: CloudMessagesEnabled
+          value: "true"
+        envFrom:
+          - secretRef:
+              name: gateway-server
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /iot-gateway
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+            requests:
+              memory: 1Gi
+              cpu: 1000m
+      dnsPolicy: ClusterFirst
+      serviceAccountName: gateway-server-svc-act
+---
