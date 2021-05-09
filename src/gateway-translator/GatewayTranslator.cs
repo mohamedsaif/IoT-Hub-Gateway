@@ -41,7 +41,7 @@ namespace GatewayTranslator
                     var gatewayHost = GlobalSettings.GetKeyValue("gateway-server-host");
                     var getewayRequestUrl = $"{gatewayHost}/{deviceId}";
                     var httpClient = httpClientFactory.CreateClient();
-                    var result = await httpClient.PostAsync(gatewayHost, payload);
+                    var result = await httpClient.PostAsync(getewayRequestUrl, payload);
 
                     if (result.StatusCode != System.Net.HttpStatusCode.OK)
                     {
