@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GatewayTranslator": {
+      "commandName": "Project",
+      "commandLineArgs": "start --port 7072"
+    }
+  }
+}

@@ -6,6 +6,7 @@ using GatewayTranslator.Utils;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace GatewayTranslator
 {
@@ -29,8 +30,16 @@ namespace GatewayTranslator
             {
                 try
                 {
-                    var payload = new StringContent(d2cMessage, Encoding.UTF8, "application/json");
+                    dynamic payloadJson = JsonConvert.DeserializeObject(d2cMessage);
+                    string deviceId = payloadJson?.deviceId;
+
+                    //Remove the id as it no longer needed in the final submission to gateway (id is passed in the request)
+                    payloadJson.Remove("deviceId");
+
+                    var payloadString = JsonConvert.SerializeObject(payloadJson);
+                    var payload = new StringContent(payloadString, Encoding.UTF8, "application/json");
                     var gatewayHost = GlobalSettings.GetKeyValue("gateway-server-host");
+                    var getewayRequestUrl = $"{gatewayHost}/{deviceId}";
                     var httpClient = httpClientFactory.CreateClient();
                     var result = await httpClient.PostAsync(gatewayHost, payload);
 
