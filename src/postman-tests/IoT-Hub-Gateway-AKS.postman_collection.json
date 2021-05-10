@@ -1,0 +1,107 @@
+{
+	"info": {
+		"_postman_id": "e7ec6c5d-cee2-49e5-bbae-36c8168b3f6c",
+		"name": "IoT-Hub-Gateway-AKS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "gateway-orchestrator-health-aks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{orchestrator-host}}/",
+					"protocol": "http",
+					"host": [
+						"{{orchestrator-host}}"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "gateway-orchestrator-aks",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"RowNumber\": 1,\r\n\t\"id\": 1234,\r\n\t\"smartcardnumber\": \"555552222\",\r\n\t\"ipaddress\": \"2.2.2.2\",\r\n\t\"platform\": \"SUPER\",\r\n\t\"country\": \"WW\",\r\n\t\"hardwareplatform\": \"MICRO\",\r\n\t\"logdatetime\": \"{{$isoTimestamp}}\",\r\n\t\"logfiledata\": \"TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdCwgc2VkIGRvIGVpdXNtb2QgdGVtcG9yIGluY2lkaWR1bnQgdXQgbGFib3JlIGV0IGRvbG9yZSBtYWduYSBhbGlxdWEuIFV0IGVuaW0gYWQgbWluaW0gdmVuaWFtLCBxdWlzIG5vc3RydWQgZXhlcmNpdGF0aW9uIHVsbGFtY28gbGFib3JpcyBuaXNpIHV0IGFsaXF1aXAgZXggZWEgY29tbW9kbyBjb25zZXF1YXQuIER1aXMgYXV0ZSBpcnVyZSBkb2xvciBpbiByZXByZWhlbmRlcml0IGluIHZvbHVwdGF0ZSB2ZWxpdCBlc3NlIGNpbGx1bSBkb2xvcmUgZXUgZnVnaWF0IG51bGxhIHBhcmlhdHVyLiBFeGNlcHRldXIgc2ludCBvY2NhZWNhdCBjdXBpZGF0YXQgbm9uIHByb2lkZW50LCBzdW50IGluIGN1bHBhIHF1aSBvZmZpY2lhIGRlc2VydW50IG1vbGxpdCBhbmltIGlkIGVzdCBsYWJvcnVt\",\r\n\t\"isprocessed\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{orchestrator-host}}/api/GatewayOrchestrator?deviceId={{sample-device-id}}",
+					"protocol": "http",
+					"host": [
+						"{{orchestrator-host}}"
+					],
+					"path": [
+						"api",
+						"GatewayOrchestrator"
+					],
+					"query": [
+						{
+							"key": "deviceId",
+							"value": "{{sample-device-id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "iot-hub-server-health-aks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{server-host}}/iot-gateway",
+					"protocol": "http",
+					"host": [
+						"{{server-host}}"
+					],
+					"path": [
+						"iot-gateway"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "gateway-server-send-aks",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"RowNumber\": 1,\r\n\t\"id\": 1234,\r\n\t\"smartcardnumber\": \"555552222\",\r\n\t\"ipaddress\": \"2.2.2.2\",\r\n\t\"platform\": \"SUPER\",\r\n\t\"country\": \"WW\",\r\n\t\"hardwareplatform\": \"MICRO\",\r\n\t\"logdatetime\": \"{{$isoTimestamp}}\",\r\n\t\"logfiledata\": \"TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdCwgc2VkIGRvIGVpdXNtb2QgdGVtcG9yIGluY2lkaWR1bnQgdXQgbGFib3JlIGV0IGRvbG9yZSBtYWduYSBhbGlxdWEuIFV0IGVuaW0gYWQgbWluaW0gdmVuaWFtLCBxdWlzIG5vc3RydWQgZXhlcmNpdGF0aW9uIHVsbGFtY28gbGFib3JpcyBuaXNpIHV0IGFsaXF1aXAgZXggZWEgY29tbW9kbyBjb25zZXF1YXQuIER1aXMgYXV0ZSBpcnVyZSBkb2xvciBpbiByZXByZWhlbmRlcml0IGluIHZvbHVwdGF0ZSB2ZWxpdCBlc3NlIGNpbGx1bSBkb2xvcmUgZXUgZnVnaWF0IG51bGxhIHBhcmlhdHVyLiBFeGNlcHRldXIgc2ludCBvY2NhZWNhdCBjdXBpZGF0YXQgbm9uIHByb2lkZW50LCBzdW50IGluIGN1bHBhIHF1aSBvZmZpY2lhIGRlc2VydW50IG1vbGxpdCBhbmltIGlkIGVzdCBsYWJvcnVt\",\r\n\t\"isprocessed\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{server-host}}/iot-gateway/{{sample-device-id}}",
+					"protocol": "http",
+					"host": [
+						"{{server-host}}"
+					],
+					"path": [
+						"iot-gateway",
+						"{{sample-device-id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

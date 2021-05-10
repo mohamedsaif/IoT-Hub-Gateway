@@ -20,18 +20,16 @@ spec:
       - name: gateway-server
         image: REPLACE-ACR-NAME.azurecr.io/iothub/gateway-server:latest
         env:
-        # - name: IoTHubHostName
-        #   value: REPLACE-IOTHUB-NAME.azure-devices.net
-        # - name: AccessPolicyName
-        #   value: REPLACE-POLICY-NAME
-        # - name: AccessPolicyKey
-        #   value: "REPLACE-POLICY-KEY"
-        - name: SharedAccessPolicyKeyEnabled
+        - name: ServerOptions__SharedAccessPolicyKeyEnabled
           value: "true"
-        - name: DirectMethodEnabled
+        - name: ServerOptions__DirectMethodEnabled
           value: "true"
-        - name: CloudMessagesEnabled
+        - name: ServerOptions__CloudMessagesEnabled
           value: "true"
+        - name: ServerOptions__DeviceOperationTimeout
+          value: 10000
+        - name: ServerOptions__DefaultDeviceCacheInMinutes
+          value: 60
         envFrom:
           - secretRef:
               name: gateway-server

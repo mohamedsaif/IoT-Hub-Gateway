@@ -45,7 +45,8 @@ namespace GatewayTranslator
 
                     if (result.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        throw new ApplicationException($"Failed to process message from IoT Hub Gateway. Payload: {d2cMessage}");
+                        string serverResponse = await result.Content.ReadAsStringAsync();
+                        throw new ApplicationException($"Failed to process message from IoT Hub Gateway. Payload: {d2cMessage}. ERROR: {result.StatusCode}||{serverResponse}");
                     }
                 }
                 catch (Exception ex)
