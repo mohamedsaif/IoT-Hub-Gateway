@@ -26,3 +26,21 @@ To generate Kubernetes deployment file, you can also use (you need to replace th
 func kubernetes deploy --name gateway-orchestrator --registry <container-registry-username> --dry-run
 
 ```
+
+# KEDA
+
+I'm using [KEDA](https://keda.sh) to automatically scale out the gateway-translator based on the lenght of the Service Bus topic.
+
+Installing KEDA on the AKS cluster using helm v3
+
+```bash
+
+helm repo add kedacore https://kedacore.github.io/charts
+helm repo update
+kubectl create namespace keda
+helm install keda kedacore/keda --namespace keda
+
+# Uninstall
+# helm uninstall keda -n keda
+
+```

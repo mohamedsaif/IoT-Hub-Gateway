@@ -19,7 +19,7 @@ namespace GatewayTranslator
             this.httpClientFactory = httpClientFactory;
         }
 
-        [FunctionName("gateway-translator")]
+        [FunctionName("GatewayTranslator")]
         public async Task ProcessMessage(
             [ServiceBusTrigger("d2c-messages", "d2c-messages-sub", Connection = "gateway-translator-sb-conn")]string d2cMessage, 
             ILogger log)

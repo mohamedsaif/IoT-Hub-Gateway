@@ -18,7 +18,7 @@ namespace GatewayOrchestrator
     {
         [FunctionName("GatewayOrchestrator")]
         [OpenApiOperation(operationId: "Run", tags: new[] { "name" })]
-        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
+        //[OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
         [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(string), Description = "The OK response")]
         //[return: ServiceBus("d2c-messages", Connection = "gateway-orchestrator-sb-conn", EntityType = Microsoft.Azure.WebJobs.ServiceBus.EntityType.Topic)]

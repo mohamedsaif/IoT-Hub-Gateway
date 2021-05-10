@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gateway-server-deployment
+  name: gateway-server-http-deployment
   namespace: iot-hub-gateway
   labels:
     app: gateway-server-http
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: gateway-server
-        image: REPLACE-ACR-NAME.azurecr.io/iothub/gateway-server:1.0.2
+        image: REPLACE-ACR-NAME.azurecr.io/iothub/gateway-server:latest
         env:
         # - name: IoTHubHostName
         #   value: REPLACE-IOTHUB-NAME.azure-devices.net
