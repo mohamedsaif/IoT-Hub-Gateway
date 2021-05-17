@@ -22,7 +22,7 @@ namespace IoTHubGateway.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> Health()
         {
-            return Ok("Service running...");
+            return Ok($"Service version ({options.AppVersion}) is running...");
         }
 
         /// <summary>
@@ -34,29 +34,37 @@ namespace IoTHubGateway.Server.Controllers
         [HttpPost("{deviceId}")]
         public async Task<IActionResult> Send(string deviceId, [FromBody] dynamic payload)
         {
-            if (string.IsNullOrEmpty(deviceId))
-                return BadRequest(new { error = "Missing deviceId" });
-
-            if (payload == null)
-                return BadRequest(new { error = "Missing payload" });
-            
-            var sasToken = this.ControllerContext.HttpContext.Request.Headers[Constants.SasTokenHeaderName].ToString();
-            if (!string.IsNullOrEmpty(sasToken))
+            try
             {
-                var tokenExpirationDate = ResolveTokenExpiration(sasToken);
-                if (!tokenExpirationDate.HasValue)
-                    tokenExpirationDate = DateTime.UtcNow.AddMinutes(20);
+                if (string.IsNullOrEmpty(deviceId))
+                    return BadRequest(new { error = "Missing deviceId" });
 
-                await gatewayService.SendDeviceToCloudMessageByToken(deviceId, payload.ToString(), sasToken, tokenExpirationDate.Value);
+                if (payload == null)
+                    return BadRequest(new { error = "Missing payload" });
+
+                var sasToken = this.ControllerContext.HttpContext.Request.Headers[Constants.SasTokenHeaderName].ToString();
+                if (!string.IsNullOrEmpty(sasToken))
+                {
+                    var tokenExpirationDate = ResolveTokenExpiration(sasToken);
+                    if (!tokenExpirationDate.HasValue)
+                        tokenExpirationDate = DateTime.UtcNow.AddMinutes(20);
+
+                    await gatewayService.SendDeviceToCloudMessageByToken(deviceId, payload.ToString(), sasToken, tokenExpirationDate.Value);
+                }
+                else
+                {
+                    if (!this.options.SharedAccessPolicyKeyEnabled)
+                        return BadRequest(new { error = "Shared access is not enabled" });
+                    await gatewayService.SendDeviceToCloudMessageBySharedAccess(deviceId, payload.ToString());
+                }
+
+                return Ok();
             }
-            else
+            catch (Exception ex)
             {
-                if (!this.options.SharedAccessPolicyKeyEnabled)
-                    return BadRequest(new { error = "Shared access is not enabled" });
-                await gatewayService.SendDeviceToCloudMessageBySharedAccess(deviceId, payload.ToString());
+                return BadRequest(new { Error = ex.Message, Stack = ex.StackTrace });
+                //return new StatusCodeResult(500);
             }
-
-            return Ok();
         }
 
         /// <summary>

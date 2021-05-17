@@ -30,6 +30,12 @@ spec:
           value: 10000
         - name: ServerOptions__DefaultDeviceCacheInMinutes
           value: 60
+        - name: ServerOptions__CreateDevices
+          value: "true"
+        - name: ApplicationInsights__InstrumentationKey
+          value: REPLACE-INST-KEY
+        - name: ServerOptions__AppVersion
+          value: v1.0
         envFrom:
           - secretRef:
               name: gateway-server

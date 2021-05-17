@@ -28,6 +28,10 @@ spec:
           value: kubernetes
         - name: FUNCTIONS_WORKER_RUNTIME
           value: dotnet
+        - name: AppVersion
+          value: v1.0
+        - name: APPINSIGHTS_INSTRUMENTATIONKEY
+          value: REPLACE-INST-KEY
         # - name: AzureWebJobsKubernetesSecretName
         #   value: secrets/func-keys-kube-secret-gateway-orchestrator
         envFrom:

@@ -40,13 +40,15 @@ namespace GatewayTranslator
                     var payload = new StringContent(payloadString, Encoding.UTF8, "application/json");
                     var gatewayHost = GlobalSettings.GetKeyValue("gateway-server-host");
                     var getewayRequestUrl = $"{gatewayHost}/{deviceId}";
-                    var httpClient = httpClientFactory.CreateClient();
-                    var result = await httpClient.PostAsync(getewayRequestUrl, payload);
-
-                    if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                    using(var httpClient = httpClientFactory.CreateClient())
                     {
-                        string serverResponse = await result.Content.ReadAsStringAsync();
-                        throw new ApplicationException($"Failed to process message from IoT Hub Gateway. Payload: {d2cMessage}. ERROR: {result.StatusCode}||{serverResponse}");
+                        var result = await httpClient.PostAsync(getewayRequestUrl, payload);
+
+                        if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                        {
+                            string serverResponse = await result.Content.ReadAsStringAsync();
+                            throw new ApplicationException($"Failed to process message from IoT Hub Gateway. Payload: {d2cMessage}. ERROR: {result.StatusCode}||{serverResponse}");
+                        }
                     }
                 }
                 catch (Exception ex)

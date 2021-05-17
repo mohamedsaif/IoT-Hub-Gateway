@@ -71,7 +71,25 @@ namespace IoTHubGateway.Server
         /// Degree of parallelism used to check for cloud messages
         /// </summary>
         public int CloudMessageParallelism { get; set; } = 10;
+        /// <summary>
+        /// Flag to create new devices if they don't exists
+        /// </summary>
+        public bool CreateDevices { get; set; }
 
+        /// <summary>
+        /// Indicates the current used version and is displayed in the health endpoint
+        /// </summary>
+        public string AppVersion { get; set; }
+
+        /// <summary>
+        /// Instrumentation key for App Insights
+        /// </summary>
+        public string AppInsightsKey { get; set; }
+
+        /// <summary>
+        /// A flag to disable the memory cache
+        /// </summary>
+        public bool IsCacheDisabled { get; set; }
 
         /// <summary>
         /// Gets/sets the callback to handle cloud messages

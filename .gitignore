@@ -389,3 +389,5 @@ src/gateway-server/IoTHubGateway.Server/charts/iothubgatewayserver/templates/NOT
 src/gateway-server/IoTHubGateway.Server/k8s/deployment-mc.yaml
 src/gateway-server/IoTHubGateway.Server/k8s/deployment-sample.yaml
 src/gateway-server/IoTHubGateway.Server/k8s/deployment.yaml
+/src/load-test-client/data/full-test-data.txt
+/src/load-test-client/data/sample-test-data.txt

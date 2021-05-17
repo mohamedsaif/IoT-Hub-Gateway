@@ -13,7 +13,10 @@ namespace GatewayTranslator
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient("base", c =>
+            {
+                c.Timeout = TimeSpan.FromMinutes(3);
+            });
         }
     }
 }

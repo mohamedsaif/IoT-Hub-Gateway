@@ -1,13 +1,18 @@
-FROM mcr.microsoft.com/dotnet/sdk:2.1 AS build-env
-WORKDIR /app
+FROM microsoft/aspnetcore-build:2.0
+ARG BUILD_CONFIGURATION=Debug
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://+:80
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+EXPOSE 80
 
-# Copy csproj and restore as distinct layers
+WORKDIR /src
+COPY ["IoTHubGateway.Server/IoTHubGateway.Server.csproj", "IoTHubGateway.Server/"]
+
+RUN dotnet restore "IoTHubGateway.Server/IoTHubGateway.Server.csproj"
 COPY . .
-RUN mkdir -p /home/site/wwwroot
-RUN dotnet publish *.csproj --output /home/site/wwwroot
+WORKDIR "/src/IoTHubGateway.Server"
+RUN dotnet build --no-restore "IoTHubGateway.Server.csproj" -c $BUILD_CONFIGURATION
 
-# Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:2.1
-WORKDIR /home/site/wwwroot
-COPY --from=build-env /home/site/wwwroot .
-ENTRYPOINT ["dotnet", "IoTHubGateway.Server.dll"]
+RUN echo "exec dotnet run --no-build --no-launch-profile -c $BUILD_CONFIGURATION --" > /entrypoint.sh
+
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]

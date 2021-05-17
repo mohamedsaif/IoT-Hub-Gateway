@@ -50,6 +50,8 @@ namespace IoTHubGateway.Server
 #endif
 
             services.AddSingleton<IGatewayService, GatewayService>();
+            services.AddApplicationInsightsTelemetry(options.AppInsightsKey);
+            services.AddApplicationInsightsKubernetesEnricher();
             services.AddMvc();
         }
 
@@ -81,7 +83,7 @@ namespace IoTHubGateway.Server
 #endif
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {

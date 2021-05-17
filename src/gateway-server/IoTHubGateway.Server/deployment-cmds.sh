@@ -8,13 +8,13 @@ ACR_NAME=REPLACE
 
 # OPTION 1: Using ACR Tasks
 # With dynamic version
-az acr build -t iothub/gateway-server:{{.Run.ID}} -t iothub/gateway-server:latest -r $ACR_NAME .
+az acr build -t iothub/gateway-server:{{.Run.ID}} -t iothub/gateway-server:latest -r $ACR_NAME --file Dockerfile-aks .
 
 # With static tag only
 # az acr build -t iothub/gateway-server:1.0.0 -r $ACR_NAME .
 
 # Using custom docker files
-# az acr build -t iothub/gateway-server:1.0.2 -r $ACR_NAME . --file Dockerfile-IotHubServer
+# az acr build -t iothub/gateway-server:1.0.2 -r $ACR_NAME --file Dockerfile-IotHubServer .
 
 # OPTION 2: Using docker tools (mainly for local testing)
 ACR_SERVER=REPLACE.azurecr.io
