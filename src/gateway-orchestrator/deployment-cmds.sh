@@ -46,7 +46,9 @@ docker push $ACR_SERVER/iothub/gateway-orchestrator:1.0.0
 
 # Handling the secrets if you want to use the provided -secrets.yaml file
 # You need to encode the literal value to base64 before adding it to the file
-echo -n "REPLACE_SERVICE_BUS_CONNECTION" | base64 -w 0
+# Note: Service bus connection string needs to have receive permission and DON'T include the "EntityPath"
+echo -n "REPLACE_FUNC_SERVICE_BUS_CONNECTION" | base64 -w 0
+echo -n "REPLACE_APPINSIGHTS_INSTRUMENTATIONKEY" | base64 -w 0
 cd Deployment
 
 # Namespace deployment is optional if the namespace already exists

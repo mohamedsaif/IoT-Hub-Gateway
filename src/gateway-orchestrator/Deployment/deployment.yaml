@@ -19,6 +19,7 @@ spec:
       containers:
       - name: gateway-orchestrator-http
         image: REPLACE-ACR-NAME.azurecr.io/iothub/gateway-orchestrator:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:

@@ -19,6 +19,7 @@ spec:
       containers:
       - name: gateway-server
         image: REPLACE-ACR-NAME.azurecr.io/iothub/gateway-server:latest
+        imagePullPolicy: Always
         env:
         - name: ServerOptions__SharedAccessPolicyKeyEnabled
           value: "true"

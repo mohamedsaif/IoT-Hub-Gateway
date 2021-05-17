@@ -19,6 +19,7 @@ spec:
       containers:
       - name: gateway-translator-sb
         image: REPLACE-ACR-NAME.azurecr.io/iothub/gateway-translator:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:
