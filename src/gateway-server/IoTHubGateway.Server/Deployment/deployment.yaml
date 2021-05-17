@@ -7,7 +7,7 @@ metadata:
   labels:
     app: gateway-server-http
 spec:
-  replicas: 5
+  replicas: 6
   selector:
     matchLabels:
       app: gateway-server-http
@@ -23,17 +23,17 @@ spec:
         - name: ServerOptions__SharedAccessPolicyKeyEnabled
           value: "true"
         - name: ServerOptions__DirectMethodEnabled
-          value: "true"
+          value: "false"
         - name: ServerOptions__CloudMessagesEnabled
-          value: "true"
+          value: "false"
         - name: ServerOptions__DeviceOperationTimeout
-          value: 10000
+          value: "30000"
         - name: ServerOptions__DefaultDeviceCacheInMinutes
-          value: 60
+          value: "5"
         - name: ServerOptions__CreateDevices
-          value: "true"
-        - name: ApplicationInsights__InstrumentationKey
-          value: REPLACE-INST-KEY
+          value: "false"
+        - name: ServerOptions__IsCacheDisabled
+          value: "false"
         - name: ServerOptions__AppVersion
           value: v1.0
         envFrom:
@@ -49,11 +49,11 @@ spec:
           periodSeconds: 5
         resources:
             limits:
-              memory: 1Gi
-              cpu: 1000m
+              memory: 16Gi
+              cpu: 6000m
             requests:
-              memory: 1Gi
-              cpu: 1000m
+              memory: 16Gi
+              cpu: 6000m
       dnsPolicy: ClusterFirst
       serviceAccountName: gateway-server-svc-act
 ---

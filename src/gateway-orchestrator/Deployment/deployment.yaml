@@ -30,10 +30,6 @@ spec:
           value: dotnet
         - name: AppVersion
           value: v1.0
-        - name: APPINSIGHTS_INSTRUMENTATIONKEY
-          value: REPLACE-INST-KEY
-        # - name: AzureWebJobsKubernetesSecretName
-        #   value: secrets/func-keys-kube-secret-gateway-orchestrator
         envFrom:
         - secretRef:
             name: gateway-orchestrator
@@ -57,10 +53,10 @@ spec:
             scheme: HTTP
         resources:
             limits:
-              memory: 512Mi
-              cpu: 500m
+              memory: 4Gi
+              cpu: 1000m
             requests:
-              memory: 512Mi
-              cpu: 500m
+              memory: 4Gi
+              cpu: 1000m
       serviceAccountName: gateway-orchestrator-svc-act
 ---

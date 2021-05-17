@@ -32,10 +32,6 @@ spec:
           value: http://gateway-server-http-service/iot-gateway
         - name: AppVersion
           value: v1.0
-        - name: APPINSIGHTS_INSTRUMENTATIONKEY
-          value: REPLACE-INST-KEY
-        # - name: AzureWebJobsKubernetesSecretName
-        #   value: secrets/func-keys-kube-secret-gateway-translator
         envFrom:
         - secretRef:
             name: gateway-translator
