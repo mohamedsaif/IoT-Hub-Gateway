@@ -66,5 +66,5 @@ You need to make some adjustments to some of the YAML files to reflect you speci
 Specific instructions are specified in each project in a bash script named [deployment-cmds.sh]. Follow these instructions to push each service container to Azure Container Registry and deploy then each service to AKS
 
 # Testing
-In order to test the functionality of the server, you can use something simple as [Postman]. 
+In order to test the functionality of the server, you can use something as simple as [Postman]. 
 Included in the project a Postman template that can be imported for sample requests to target the deployment.
