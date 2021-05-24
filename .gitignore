@@ -391,3 +391,6 @@ src/gateway-server/IoTHubGateway.Server/k8s/deployment-sample.yaml
 src/gateway-server/IoTHubGateway.Server/k8s/deployment.yaml
 /src/load-test-client/data/full-test-data.txt
 /src/load-test-client/data/sample-test-data.txt
+/src/gateway-server/IoTHubGateway.Server/Properties/ServiceDependencies/local/appInsights1.arm.json
+/src/gateway-server/IoTHubGateway.Server/Properties/serviceDependencies.local.json
+/src/gateway-server/IoTHubGateway.Server/Properties/serviceDependencies.json

@@ -49,7 +49,7 @@ docker push $ACR_SERVER/iothub/gateway-server:1.0.0
 echo -n "IoTHubHostName" | base64 -w 0
 echo -n "AccessPolicyName" | base64 -w 0
 echo -n "AccessPolicyKey" | base64 -w 0
-echo -n "AppInsightsInstKey" | base64 -w 0
+echo -n "AppInsightsInstConnectionString" | base64 -w 0
 cd Deployment
 
 # Namespace deployment is optional if the namespace already exists

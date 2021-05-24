@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <UserSecretsId>32320b7c-4a51-49ec-960d-512153a37d2b</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/d51d943c-cd99-4d72-ab4c-b212f7a204c0/resourceGroups/iot-hub-gateway-rg/providers/microsoft.insights/components/iot-hub-server-insights</ApplicationInsightsResourceId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.Kubernetes" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
     <PackageReference Include="Microsoft.Azure.Devices" Version="1.34.0" />

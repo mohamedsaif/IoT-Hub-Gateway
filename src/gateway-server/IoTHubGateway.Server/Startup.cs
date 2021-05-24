@@ -50,7 +50,7 @@ namespace IoTHubGateway.Server
 #endif
 
             services.AddSingleton<IGatewayService, GatewayService>();
-            services.AddApplicationInsightsTelemetry(options.AppInsightsKey);
+            services.AddApplicationInsightsTelemetry();
             services.AddApplicationInsightsKubernetesEnricher();
             services.AddMvc();
         }

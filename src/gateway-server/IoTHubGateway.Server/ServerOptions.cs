@@ -81,10 +81,10 @@ namespace IoTHubGateway.Server
         /// </summary>
         public string AppVersion { get; set; }
 
-        /// <summary>
-        /// Instrumentation key for App Insights
-        /// </summary>
-        public string AppInsightsKey { get; set; }
+        // /// <summary>
+        // /// Instrumentation key for App Insights
+        // /// </summary>
+        // public string AppInsightsKey { get; set; }
 
         /// <summary>
         /// A flag to disable the memory cache
