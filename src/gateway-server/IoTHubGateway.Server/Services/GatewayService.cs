@@ -254,7 +254,7 @@ namespace IoTHubGateway.Server.Services
                     }
                     catch (Exception innerEx)
                     {
-                        this.logger.LogError(ex, $"CLOSING FAILED: Could not connect device {deviceId}, cache status ({serverOptions.IsCacheDisabled}) with error {ex.Message} and stack: {ex.StackTrace}");
+                        this.logger.LogError(ex, $"CLOSING FAILED: Could not connect device {deviceId}, cache status ({serverOptions.IsCacheDisabled}) with error {ex.Message} and stack: {ex.StackTrace}. NEW EXP: {innerEx.Message}");
                     }
                 }
                 this.logger.LogError(ex, $"DEVICE-RESOLVE: Could not connect device {deviceId}, cache status ({serverOptions.IsCacheDisabled}) with error {ex.Message} and stack: {ex.StackTrace}");

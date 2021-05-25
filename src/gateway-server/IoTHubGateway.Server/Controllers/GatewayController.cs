@@ -22,7 +22,7 @@ namespace IoTHubGateway.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> Health()
         {
-            return Ok($"Service version ({options.AppVersion}) is running...");
+            return Ok($"Service version ({options.AppVersion}) is running... and IoT Hub SDK (v1.7.2)");
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace IoTHubGateway.Server.Controllers
                 if (string.IsNullOrEmpty(deviceId))
                     return BadRequest(new { error = "Missing deviceId" });
 
-                if (payload == null)
+                if (payload is null)
                     return BadRequest(new { error = "Missing payload" });
 
                 var sasToken = this.ControllerContext.HttpContext.Request.Headers[Constants.SasTokenHeaderName].ToString();
