@@ -3,7 +3,11 @@ Cloud native IoT Hub Gateway implementation to support devices that can't connec
 
 ## Architecture
 
+### Azure Architecture
 ![architecture](./res/IoT-Hub-Gateway-AKS-Arch-1.0.0.png)
+
+### AKS Internal Architecture
+![architecture](./res/IoT-Hub-Gateway-AKS-Internal-Arch-1.0.0.png)
 
 ## Azure Functions
 
