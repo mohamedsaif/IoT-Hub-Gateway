@@ -1,7 +1,11 @@
 # IoT-Hub-Gateway
 Cloud native IoT Hub Gateway implementation to support devices that can't connect directly to IoT Hub supported protocols
 
-# Azure Functions
+## Architecture
+
+![architecture](./res/IoT-Hub-Gateway-AKS-Arch-1.0.0.png)
+
+## Azure Functions
 
 Currently the project is developed using version 3.0 of Azure Functions (Azure Functions Core Tools v3.0.3442)
 
@@ -27,7 +31,7 @@ func kubernetes deploy --name gateway-orchestrator --registry <container-registr
 
 ```
 
-# KEDA
+## KEDA
 
 I'm using [KEDA](https://keda.sh) to automatically scale out the gateway-translator based on the lenght of the Service Bus topic.
 
