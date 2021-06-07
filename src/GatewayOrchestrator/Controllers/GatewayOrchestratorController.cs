@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Dapr.Client;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,11 +13,16 @@ namespace GatewayOrchestrator.Controllers
     [ApiController]
     public class GatewayOrchestratorController : ControllerBase
     {
+        private DaprClient daprClient;
         private ILogger<GatewayOrchestratorController> logger;
+        private ServerOptions serverOptions;
 
-        public GatewayOrchestratorController(ILogger<GatewayOrchestratorController> logger)
+
+        public GatewayOrchestratorController(DaprClient dapr, ServerOptions serverOptions, ILogger<GatewayOrchestratorController> logger)
         {
+            daprClient = dapr ?? throw new ArgumentNullException(nameof(dapr));
             this.logger = logger;
+            this.serverOptions = serverOptions;
         }
     }
 }

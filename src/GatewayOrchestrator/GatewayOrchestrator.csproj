@@ -16,4 +16,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DaprComponents\" />
+    <Folder Include="Deployments\" />
+    <Folder Include="DaprComponentsDev\" />
+  </ItemGroup>
+
 </Project>
