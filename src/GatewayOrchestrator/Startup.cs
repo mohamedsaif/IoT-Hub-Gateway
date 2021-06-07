@@ -1,3 +1,4 @@
+using GatewayOrchestrator.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +27,11 @@ namespace GatewayOrchestrator
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var options = new ServerOptions();
+            Configuration.GetSection(nameof(ServerOptions)).Bind(options);
+            services.AddSingleton<ServerOptions>(options);
+
+            RegisterAppInsights(services);
 
             services.AddControllers()
                 .AddDapr();
@@ -33,8 +39,10 @@ namespace GatewayOrchestrator
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Gateway Orchestrator", Version = "v1" });
             });
-            string appInsightsConnection = Configuration["APPINSIGHTS_CONNECTIONSTRING"];
-            services.AddApplicationInsightsTelemetry(appInsightsConnection);
+
+            services.AddHealthChecks()
+                .AddCheck<GatewayOrchestratorController>("DefaultHealth");
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,7 +67,15 @@ namespace GatewayOrchestrator
             {
                 endpoints.MapSubscribeHandler();
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health");
             });
+        }
+
+        private void RegisterAppInsights(IServiceCollection services)
+        {
+            string appInsightsConnection = Configuration["APPINSIGHTS_CONNECTIONSTRING"];
+            services.AddApplicationInsightsTelemetry(appInsightsConnection);
+            services.AddApplicationInsightsKubernetesEnricher();
         }
     }
 }
