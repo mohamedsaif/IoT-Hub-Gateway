@@ -401,3 +401,4 @@ src/gateway-server/IoTHubGateway.Server/k8s/deployment.yaml
 /src/GatewayOrchestrator/Properties/serviceDependencies.local.json
 /src/GatewayOrchestrator/Properties/serviceDependencies.json
 /src/GatewayOrchestrator/appsettings.Development.json
+/src/GatewayTranslator/appsettings.Development.json
