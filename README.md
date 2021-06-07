@@ -53,6 +53,24 @@ helm install keda kedacore/keda --namespace keda
 
 ```
 
+## Dapr
+
+Adding Dapr support for Pub/Sub on Azure Service Bus topics
+
+You can check this [.NET Guide for Dapr](https://docs.microsoft.com/en-us/dotnet/architecture/dapr-for-net-developers/getting-started) to install and get started in .NET.
+
+Also main [dapr docs](https://docs.dapr.io/) will be a usful resource to check out
+
+### Publish
+
+Http post request to dapr sidecar end point over **http://localhost:$(daprPort)/v1.0/publish/$(topicName)** with json payload represent the message to be published
+
+NOTE: Dapr port is usually 3500 by default.
+
+### Subscriber
+
+
+
 # Deployment procedure
 
 ## Main components

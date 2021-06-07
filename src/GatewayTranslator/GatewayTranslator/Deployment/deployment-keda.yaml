@@ -1,0 +1,23 @@
+﻿---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: gateway-translator-sb-deployment-scaled-object
+  namespace: iot-hub-gateway
+  labels:
+    deploymentName: gateway-translator-sb-deployment
+spec:
+  scaleTargetRef:
+    name: gateway-translator-sb-deployment
+  pollingInterval: 30  # Optional. Default: 30 seconds
+  cooldownPeriod:  300 # Optional. Default: 300 seconds
+  minReplicaCount: 1   # Optional. Default: 0
+  maxReplicaCount: 10 # Optional. Default: 100
+  triggers:
+  - type: azure-servicebus
+    metadata:
+      connectionFromEnv: gateway-translator-sb-conn
+      topicName: d2c-messages 
+      subscriptionName: d2c-messages-sub
+      messageCount: '50' # This will be used to trigger a scale up operation when number of messages exceed this number
+---

@@ -396,3 +396,4 @@ src/gateway-server/IoTHubGateway.Server/k8s/deployment.yaml
 /src/gateway-server/IoTHubGateway.Server/Properties/serviceDependencies.json
 /src/gateway-server/IoTHubGateway.Server/Dockerfile-old2
 /src/gateway-server/IoTHubGateway.Server/Dockerfile-aks-core2
+**/DaprComponentsDev/*

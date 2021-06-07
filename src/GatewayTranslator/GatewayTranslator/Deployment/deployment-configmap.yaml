@@ -1,0 +1,19 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: appsettings
+  namespace: mrjamiebowman
+data:
+  appsettings.json: |-
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft": "Warning",
+          "Microsoft.Hosting.Lifetime": "Information"
+        }
+      },
+      "ServerOptions": {
+        "GatewayServerHost": "http://localhost:49153/iot-gateway"
+      }
+    }
