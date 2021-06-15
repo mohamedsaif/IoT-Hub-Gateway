@@ -35,6 +35,13 @@ namespace GatewayOrchestrator.Controllers
             return Task.FromResult(HealthCheckResult.Healthy($"Service running version ({serverOptions.AppVersion})"));
         }
 
+        [HttpGet]
+        [Route("version")]
+        public async Task<IActionResult> GetVersion()
+        {
+            return Ok($"Service running version ({serverOptions.AppVersion}");
+        }
+
         /// <summary>
         /// Accept HTTP request with a payload and push it to the relevant service bus topic for async processing
         /// </summary>
@@ -56,8 +63,8 @@ namespace GatewayOrchestrator.Controllers
             JObject message = JObject.Parse(payload.ToString());
             if (!message.ContainsKey("deviceId"))
                 message.Add("devcieId", deviceId);
-
-            await daprClient.PublishEventAsync<JObject>(serverOptions.ServiceBusName, serverOptions.ServiceBusTopic, message);
+            var messageJson = message.ToString();
+            await daprClient.PublishEventAsync(serverOptions.ServiceBusName, serverOptions.ServiceBusTopic, messageJson);
             
             return (ActionResult)new OkResult();
         }

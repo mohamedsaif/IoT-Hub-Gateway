@@ -5,7 +5,7 @@
     <UserSecretsId>0c2f9ea4-ac8a-4c3b-86d2-b68b4b493e65</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
-    <ApplicationInsightsResourceId>/subscriptions/d51d943c-cd99-4d72-ab4c-b212f7a204c0/resourceGroups/iot-hub-gateway-rg/providers/microsoft.insights/components/central-iot-hub-gateway-insights</ApplicationInsightsResourceId>
+    <DockerComposeProjectPath>docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>

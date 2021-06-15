@@ -39,6 +39,13 @@ namespace GatewayTranslator.Controllers
             return Task.FromResult(HealthCheckResult.Healthy($"Service running version ({serverOptions.AppVersion})"));
         }
 
+        [HttpGet]
+        [Route("version")]
+        public async Task<IActionResult> GetHealth()
+        {
+            return Ok($"Service is running version ({serverOptions.AppVersion})");
+        }
+
         [HttpPost]
         [Route("iot-gateway")]
         [Topic("gateway-servicebus", "d2c-messages")]

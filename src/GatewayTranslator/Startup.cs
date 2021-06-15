@@ -69,9 +69,9 @@ namespace GatewayTranslator
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 // Required by dapr pub/sub
                 endpoints.MapSubscribeHandler();
-                endpoints.MapControllers();
                 endpoints.MapHealthChecks("/health");
             });
         }
