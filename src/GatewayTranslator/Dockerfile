@@ -8,9 +8,9 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["GatewayTranslator.csproj", "."]
-RUN dotnet restore "./GatewayTranslator.csproj"
+RUN dotnet restore "GatewayTranslator.csproj"
 COPY . .
-WORKDIR "/src/."
+WORKDIR "/src/"
 RUN dotnet build "GatewayTranslator.csproj" -c Release -o /app/build
 
 FROM build AS publish

@@ -405,3 +405,4 @@ src/gateway-server/IoTHubGateway.Server/k8s/deployment.yaml
 /src/GatewayTranslator/Samples/*
 /src/GatewayOrchestrator/Samples/sb-sample.json
 /src/GatewayOrchestrator/Dockerfile.original
+/src/GatewayTranslator/Dockerfile.original
