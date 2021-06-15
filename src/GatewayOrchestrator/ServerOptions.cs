@@ -12,5 +12,15 @@ namespace GatewayOrchestrator
         /// Indicates the current used version and is displayed in the health endpoint
         /// </summary>
         public string AppVersion { get; set; }
+
+        /// <summary>
+        /// The service bus name that will be used by dapr
+        /// </summary>
+        public string ServiceBusName { get; set; }
+
+        /// <summary>
+        /// The service bus topic that will be used by dapr to publish messages to
+        /// </summary>
+        public string ServiceBusTopic { get; set; }
     }
 }

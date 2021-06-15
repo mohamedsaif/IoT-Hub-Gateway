@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,9 +29,37 @@ namespace GatewayOrchestrator.Controllers
             this.serverOptions = serverOptions;
         }
 
+        [HttpGet]
         public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(HealthCheckResult.Healthy($"Service running version ({serverOptions.AppVersion})"));
+        }
+
+        /// <summary>
+        /// Accept HTTP request with a payload and push it to the relevant service bus topic for async processing
+        /// </summary>
+        /// <param name="deviceId">The id of the device registered with IoT Hub</param>
+        /// <param name="payload">The device status message payload in dynamic json format</param>
+        /// <returns></returns>
+        [HttpPost("{deviceId}")]
+        public async Task<IActionResult> ProcessRequest(string deviceId, [FromBody] dynamic payload)
+        {
+            logger.LogInformation("GatewayOrchestrator: HTTP trigger function processed a request.");
+
+            if (string.IsNullOrEmpty(deviceId))
+                return (ActionResult)new BadRequestObjectResult("Invalid request parameters");
+
+            if (payload is null)
+                return (ActionResult)new BadRequestObjectResult("Invalid request payload");
+
+            //Here i'm assuming the payload doesn't include the deviceId, adding it here:
+            JObject message = JObject.Parse(payload.ToString());
+            if (!message.ContainsKey("deviceId"))
+                message.Add("devcieId", deviceId);
+
+            await daprClient.PublishEventAsync<JObject>(serverOptions.ServiceBusName, serverOptions.ServiceBusTopic, message);
+            
+            return (ActionResult)new OkResult();
         }
     }
 }

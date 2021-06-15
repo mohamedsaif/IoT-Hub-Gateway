@@ -17,5 +17,15 @@ namespace GatewayTranslator
         /// Url to iot-hub gateway server to post the messages to
         /// </summary>
         public string GatewayServerHost { get; set; }
+
+        /// <summary>
+        /// The service bus name that will be used by dapr
+        /// </summary>
+        public string ServiceBusName { get; set; }
+
+        /// <summary>
+        /// The service bus topic that will be used by dapr to publish messages to
+        /// </summary>
+        public string ServiceBusTopic { get; set; }
     }
 }

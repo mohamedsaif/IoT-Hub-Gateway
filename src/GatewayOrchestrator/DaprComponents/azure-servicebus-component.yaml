@@ -1,7 +1,7 @@
 ﻿apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: gateway-translator-pubsub
+  name: gateway-servicebus
   namespace: iot-hub-gateway
 spec:
   type: pubsub.azure.servicebus

@@ -1,4 +1,5 @@
-﻿using Dapr.Client;
+﻿using Dapr;
+using Dapr.Client;
 using GatewayTranslator.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,8 +41,11 @@ namespace GatewayTranslator.Controllers
 
         [HttpPost]
         [Route("iot-gateway")]
-        public async Task ProcessMessage(string d2cMessage)
+        [Topic("gateway-servicebus", "d2c-messages")]
+        public async Task<ActionResult> ProcessMessage(string d2cMessage)
         {
+            logger.LogInformation($"SB triggered Gateway Translator for {d2cMessage}");
+
             if (IsMessageValid(d2cMessage))
             {
                 try
@@ -58,13 +62,14 @@ namespace GatewayTranslator.Controllers
                     var getewayRequestUrl = $"{gatewayHost}/{deviceId}";
                     using (var httpClient = httpClientFactory.CreateClient())
                     {
-                        var result = await httpClient.PostAsync(getewayRequestUrl, payload);
+                        //var result = await httpClient.PostAsync(getewayRequestUrl, payload);
 
-                        if (result.StatusCode != System.Net.HttpStatusCode.OK)
-                        {
-                            string serverResponse = await result.Content.ReadAsStringAsync();
-                            throw new ApplicationException($"Failed to process message from IoT Hub Gateway. Payload: {d2cMessage}. ERROR: {result.StatusCode}||{serverResponse}");
-                        }
+                        //if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                        //{
+                        //    string serverResponse = await result.Content.ReadAsStringAsync();
+                        //    throw new ApplicationException($"Failed to process message from IoT Hub Gateway. Payload: {d2cMessage}. ERROR: {result.StatusCode}||{serverResponse}");
+                        //}
+                        return new OkObjectResult("Message posted successfully");
                     }
                 }
                 catch (Exception ex)
@@ -76,6 +81,7 @@ namespace GatewayTranslator.Controllers
             else
             {
                 //invalid messages handling here
+                throw new ArgumentException("Message is not in correct format");
             }
         }
 
