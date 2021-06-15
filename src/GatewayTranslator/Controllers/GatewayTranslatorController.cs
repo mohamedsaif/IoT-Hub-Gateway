@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace GatewayTranslator.Controllers
     [Route("[controller]")]
     public class GatewayTranslatorController : ControllerBase, IHealthCheck
     {
+        private const string EntityIdAttributeName = "deviceId";
         private DaprClient daprClient;
         private IHttpClientFactory httpClientFactory;
         private ILogger<GatewayTranslatorController> logger;
@@ -49,33 +51,36 @@ namespace GatewayTranslator.Controllers
         [HttpPost]
         [Route("iot-gateway")]
         [Topic("gateway-servicebus", "d2c-messages")]
-        public async Task<ActionResult> ProcessMessage(string d2cMessage)
+        public async Task<ActionResult> ProcessMessage(dynamic d2cMessage)
         {
             logger.LogInformation($"SB triggered Gateway Translator for {d2cMessage}");
+            var d2cMessageString = d2cMessage.ToString();
+            var isValidMessage = IsMessageValid(d2cMessageString);
 
-            if (IsMessageValid(d2cMessage))
+            if (isValidMessage)
             {
                 try
                 {
-                    dynamic payloadJson = JsonConvert.DeserializeObject(d2cMessage);
-                    string deviceId = payloadJson?.deviceId;
-
+                    JObject message = JObject.Parse(d2cMessageString);
+                    string deviceId = message.Value<string>(EntityIdAttributeName);
+                    if (string.IsNullOrEmpty(deviceId))
+                        throw new ArgumentException("Invalid payload");
                     //Remove the id as it no longer needed in the final submission to gateway (id is passed in the request)
-                    payloadJson.Remove("deviceId");
+                    message.Remove(EntityIdAttributeName);
 
-                    var payloadString = JsonConvert.SerializeObject(payloadJson);
-                    var payload = new StringContent(payloadString, Encoding.UTF8, "application/json");
+                    var messageJsonString = JsonConvert.SerializeObject(message);
+                    var payload = new StringContent(messageJsonString, Encoding.UTF8, "application/json");
                     var gatewayHost = serverOptions.GatewayServerHost;
                     var getewayRequestUrl = $"{gatewayHost}/{deviceId}";
                     using (var httpClient = httpClientFactory.CreateClient())
                     {
-                        //var result = await httpClient.PostAsync(getewayRequestUrl, payload);
+                        var result = await httpClient.PostAsync(getewayRequestUrl, payload);
 
-                        //if (result.StatusCode != System.Net.HttpStatusCode.OK)
-                        //{
-                        //    string serverResponse = await result.Content.ReadAsStringAsync();
-                        //    throw new ApplicationException($"Failed to process message from IoT Hub Gateway. Payload: {d2cMessage}. ERROR: {result.StatusCode}||{serverResponse}");
-                        //}
+                        if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                        {
+                            string serverResponse = await result.Content.ReadAsStringAsync();
+                            throw new ApplicationException($"Failed to process message from IoT Hub Gateway. Payload: {d2cMessage}. ERROR: {result.StatusCode}||{serverResponse}");
+                        }
                         return new OkObjectResult("Message posted successfully");
                     }
                 }

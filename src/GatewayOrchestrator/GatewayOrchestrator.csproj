@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <Folder Include="Deployments\" />
-    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

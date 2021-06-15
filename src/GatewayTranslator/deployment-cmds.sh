@@ -45,7 +45,7 @@ docker push $ACR_SERVER/iothub/gateway-translator:1.0.0
 # making sure dapr is installed and initialized
 dapr -v
 
-dapr run --app-id gateway-translator --components-path ./DaprComponentsDev dotnet run
+dapr run --app-id gateway-translator --components-path ./DaprComponentsDev "dotnet run --project ./GatewayTranslator.csproj"
 
 ##########################################
 # Second: Deployment to Kubernetes       #
