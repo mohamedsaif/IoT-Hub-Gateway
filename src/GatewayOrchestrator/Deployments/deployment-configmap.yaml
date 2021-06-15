@@ -1,0 +1,10 @@
+﻿kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: gateway-orchestrator-cm
+  namespace: iot-hub-gateway
+  labels:
+    app: gateway-orchestrator-http
+data:
+  ASPNETCORE_ENVIRONMENT: Production
+  OrchestratorType: K8S
