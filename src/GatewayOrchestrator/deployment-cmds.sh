@@ -47,7 +47,10 @@ docker push $ACR_SERVER/iothub/gateway-orchestrator:1.0.0
 # making sure dapr is installed and initialized
 dapr -v
 
-dapr run --app-id gateway-orchestrator --components-path ./DaprComponentsDev dotnet run
+# To run both the app and dapr side-car at the same, I'm using docker-compose file
+docker compose up
+
+# dapr run --app-id gateway-orchestrator --components-path ./DaprComponentsDev dotnet run
 
 ##########################################
 # Second: Deployment to Kubernetes       #
@@ -56,7 +59,7 @@ dapr run --app-id gateway-orchestrator --components-path ./DaprComponentsDev dot
 # Handling the secrets if you want to use the provided -secrets.yaml file
 # You need to encode the literal value to base64 before adding it to the file
 # Note: Service bus connection string needs to have receive permission and DON'T include the "EntityPath"
-echo -n "REPLACE_FUNC_SERVICE_BUS_CONNECTION" | base64 -w 0
+echo -n "REPLACE_SERVICE_BUS_CONNECTION" | base64 -w 0
 echo -n "REPLACE_APPINSIGHTS_INSTRUMENTATIONKEY" | base64 -w 0
 cd Deployment
 
@@ -64,8 +67,11 @@ cd Deployment
 kubectl apply -f deployment-namespace.yaml
 # Update the secrets with the required base64 values using the command above
 kubectl apply -f deployment-secrets.yaml
-kubectl apply -f deployment.yaml
+kubectl delete -f deployment.yaml
 kubectl apply -f deployment-service.yaml
+
+# Dapr components
+kubectl apply -f components/azure-servicebus-component.yaml
 
 # Check the deployed resources
 kubectl get all -n iot-hub-gateway
@@ -77,3 +83,7 @@ kubectl port-forward service/gateway-orchestrator-http-service 6111:80 -n iot-hu
 kubectl logs -n iot-hub-gateway -f pod/gateway-orchestrator-http-REPLACE-RANDOM
 kubectl describe -n iot-hub-gateway pod/gateway-orchestrator-http-REPLACE-RANDOM
 kubectl exec -it -n iot-hub-gateway pod/gateway-orchestrator-http-REPLACE-RANDOM /bin/bash
+
+kubectl logs -n iot-hub-gateway gateway-orchestrator-http-REPLACE-RANDOM -c daprd
+kubectl logs -n iot-hub-gateway gateway-orchestrator-http-REPLACE-RANDOM -c gateway-orchestrator-http
+kubectl describe po -n iot-hub-gateway gateway-orchestrator-http-REPLACE-RANDOM

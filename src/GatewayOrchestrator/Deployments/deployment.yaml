@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gateway-orchestrator-http-deployment
+  name: gateway-orchestrator-http
   namespace: iot-hub-gateway
   labels:
     app: gateway-orchestrator-http
@@ -19,7 +19,6 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/app-id: "gateway-orchestrator"
         dapr.io/app-port: "80"
-        dapr.io/config: "dapr-config"
     spec:
       containers:
       - name: gateway-orchestrator-http
@@ -27,7 +26,7 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 80
-        env:        
+        env:
         - name: AppVersion
           value: v1.0
         envFrom:
@@ -50,7 +49,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 240
           httpGet:
-            path: /
+            path: /health
             port: 80
             scheme: HTTP
         resources:

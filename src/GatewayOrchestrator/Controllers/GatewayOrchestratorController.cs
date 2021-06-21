@@ -53,7 +53,7 @@ namespace GatewayOrchestrator.Controllers
         [HttpPost("{entityId}")]
         public async Task<IActionResult> ProcessRequest(string entityId, [FromBody] dynamic payload)
         {
-            logger.LogInformation("GatewayOrchestrator: HTTP trigger function processed a request.");
+            logger.LogInformation("GatewayOrchestrator: HTTP trigger starting a request.");
 
             if (string.IsNullOrEmpty(entityId))
                 return (ActionResult)new BadRequestObjectResult("Invalid request parameters");
@@ -75,6 +75,7 @@ namespace GatewayOrchestrator.Controllers
                         //var messageJson = message.ToString();
                         var messageJson = JsonConvert.SerializeObject(message);
                         await daprClient.PublishEventAsync<string>(serverOptions.ServiceBusName, serverOptions.ServiceBusTopic, messageJson);
+                        logger.LogInformation($"GatewayOrchestrator: HTTP trigger completed a DEVICE request for enitityId: ({entityId})");
                         break;
                     //case "AnotherTargetSystem":
                         //TODO: add business logic to handle publishing to the relevant bus

@@ -8,3 +8,5 @@ metadata:
 data:
   ASPNETCORE_ENVIRONMENT: Production
   OrchestratorType: K8S
+  ServerOptions__ServiceBusName: "gateway-servicebus"
+  ServerOptions__ServiceBusTopic: "d2c-messages"
