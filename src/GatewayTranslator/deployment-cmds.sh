@@ -42,10 +42,13 @@ docker push $ACR_SERVER/iothub/gateway-translator:1.0.0
 #####        Dapr local run        #######
 ##########################################
 
-# making sure dapr is installed and initialized
-dapr -v
+# Using Dapr CLI
+# making sure Dapr is installed and initialized
+# dapr -v
+# dapr run --app-id gateway-translator --components-path ./DaprComponentsDev "dotnet run --project ./GatewayTranslator.csproj"
 
-dapr run --app-id gateway-translator --components-path ./DaprComponentsDev "dotnet run --project ./GatewayTranslator.csproj"
+# I'm using docker-compose to run the app along with Dapr side-car
+docker-compose up
 
 ##########################################
 # Second: Deployment to Kubernetes       #
@@ -78,3 +81,6 @@ kubectl get scaledobject -n iot-hub-gateway
 kubectl logs -n iot-hub-gateway -f pod/gateway-translator-sb-REPLACE-RANDOM
 kubectl describe -n iot-hub-gateway pod/gateway-translator-sb-REPLACE-RANDOM
 kubectl exec -it -n iot-hub-gateway pod/gateway-translator-sb-REPLACE-RANDOM /bin/bash
+
+k logs -n iot-hub-gateway gateway-translator-sb-deployment-7656b74c7b-dpc49 -c gateway-translator-sb -f
+k logs -n iot-hub-gateway gateway-translator-sb-deployment-7656b74c7b-dpc49 -c daprd -f

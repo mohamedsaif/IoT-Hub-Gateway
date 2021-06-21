@@ -407,3 +407,4 @@ src/gateway-server/IoTHubGateway.Server/k8s/deployment.yaml
 /src/GatewayOrchestrator/Dockerfile.original
 /src/GatewayTranslator/Dockerfile.original
 /src/GatewayOrchestrator/DeploymentsDev/*
+/src/GatewayTranslator/DeploymentsDev

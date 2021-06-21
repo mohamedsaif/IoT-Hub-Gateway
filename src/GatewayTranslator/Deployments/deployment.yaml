@@ -15,6 +15,10 @@ spec:
     metadata:
       labels:
         app: gateway-translator-sb
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "gateway-translator"
+        dapr.io/app-port: "80"
     spec:
       containers:
       - name: gateway-translator-sb
@@ -37,7 +41,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 240
           httpGet:
-            path: /
+            path: /health
             port: 80
             scheme: HTTP
         startupProbe:

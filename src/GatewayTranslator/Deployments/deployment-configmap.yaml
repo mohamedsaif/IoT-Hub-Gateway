@@ -2,7 +2,7 @@
 kind: ConfigMap
 metadata:
   name: appsettings
-  namespace: mrjamiebowman
+  namespace: iot-hub-gateway
 data:
   appsettings.json: |-
     {
@@ -14,6 +14,8 @@ data:
         }
       },
       "ServerOptions": {
-        "GatewayServerHost": "http://localhost:49153/iot-gateway"
+        "GatewayServerHost": "http://gateway-server-http-service.svc.iot-hub-gateway.cluster.local/iot-gateway",
+        "ServiceBusName": "gateway-servicebus",
+        "ServiceBusTopic": "d2c-messages"
       }
     }

@@ -81,6 +81,7 @@ namespace GatewayTranslator.Controllers
                             string serverResponse = await result.Content.ReadAsStringAsync();
                             throw new ApplicationException($"Failed to process message from IoT Hub Gateway. Payload: {d2cMessage}. ERROR: {result.StatusCode}||{serverResponse}");
                         }
+                        logger.LogInformation($"SB triggered Gateway Translator completed successfully for: {d2cMessage}");
                         return new OkObjectResult("Message posted successfully");
                     }
                 }

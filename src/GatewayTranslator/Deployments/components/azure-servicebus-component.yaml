@@ -8,7 +8,9 @@ spec:
   version: v1
   metadata:
   - name: connectionString # Required
-    value: "Endpoint=sb://{ServiceBusNamespace}.servicebus.windows.net/;SharedAccessKeyName={PolicyName};SharedAccessKey={Key};EntityPath={ServiceBus}"
+    secretKeyRef:
+      name: gateway-translator
+      key: connectionString
   - name: timeoutInSec # Optional
     value: 60
   - name: handlerTimeoutInSec # Optional
@@ -16,7 +18,7 @@ spec:
   - name: disableEntityManagement # Optional
     value: "false"
   - name: maxDeliveryCount # Optional
-    value: 3
+    value: 15
   - name: lockDurationInSec # Optional
     value: 60
   - name: lockRenewalInSec # Optional
@@ -41,3 +43,5 @@ spec:
     value: 5
   - name: publishInitialRetryInternalInMs # Optional
     value: 500
+auth:
+  secretStore: kubernetes
