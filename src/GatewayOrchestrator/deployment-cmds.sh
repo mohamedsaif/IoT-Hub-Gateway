@@ -60,18 +60,22 @@ docker compose up
 # You need to encode the literal value to base64 before adding it to the file
 # Note: Service bus connection string needs to have receive permission and DON'T include the "EntityPath"
 echo -n "REPLACE_SERVICE_BUS_CONNECTION" | base64 -w 0
-echo -n "REPLACE_APPINSIGHTS_INSTRUMENTATIONKEY" | base64 -w 0
+echo -n "REPLACE_APPINSIGHTS_CONNECTIONSTRING" | base64 -w 0
 cd Deployment
 
 # Namespace deployment is optional if the namespace already exists
 kubectl apply -f deployment-namespace.yaml
 # Update the secrets with the required base64 values using the command above
 kubectl apply -f deployment-secrets.yaml
-kubectl delete -f deployment.yaml
-kubectl apply -f deployment-service.yaml
+
+kubectl apply -f deployment-configmap.yaml
 
 # Dapr components
 kubectl apply -f components/azure-servicebus-component.yaml
+
+kubectl apply -f deployment.yaml
+kubectl apply -f deployment-service.yaml
+
 
 # Check the deployed resources
 kubectl get all -n iot-hub-gateway
