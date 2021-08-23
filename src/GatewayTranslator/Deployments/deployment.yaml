@@ -1,0 +1,68 @@
+﻿---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-translator-sb-deployment
+  namespace: iot-hub-gateway
+  labels:
+    app: gateway-translator-sb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-translator-sb
+  template:
+    metadata:
+      labels:
+        app: gateway-translator-sb
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "gateway-translator"
+        dapr.io/app-port: "80"
+    spec:
+      containers:
+      - name: gateway-translator-sb
+        image: REPLACE-ACR-NAME.azurecr.io/iothub/gateway-translator:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: AppVersion
+          value: v1.0
+        envFrom:
+        - secretRef:
+            name: gateway-translator
+        volumeMounts:
+        - name: appsettings-volume
+          mountPath: /app/Settings
+        readinessProbe:
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 240
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+        startupProbe:
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 240
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+        resources:
+            limits:
+              memory: 512Mi
+              cpu: 500m
+            requests:
+              memory: 512Mi
+              cpu: 500m
+      volumes:
+      - name: appsettings-volume
+        configMap:
+          name: appsettings
+      serviceAccountName: gateway-translator-svc-act
+---

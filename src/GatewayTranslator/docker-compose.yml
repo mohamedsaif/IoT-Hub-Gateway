@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  gateway-translator:
+    image: ${DOCKER_REGISTRY-}gateway-translator
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+  gateway-translator-dapr:
+    image: "daprio/daprd:1.2.0"
+    depends_on:
+      - gateway-translator
+    network_mode: "service:gateway-translator"

@@ -1,0 +1,24 @@
+version: '3.4'
+
+services:
+  gateway-translator:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    ports:
+      - "5103:80"
+      - "9103:81"
+      - "50001:50001"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  gateway-translator-dapr:
+    command: ["./daprd",
+      "-app-id", "gateway-translator",
+      "-app-port", "80",
+      "-components-path", "/components",
+      "-config", "components/dapr-config.yaml",
+      "-placement-host-address", "dapr-placement:50000"
+      ]
+    volumes:
+      - "./DaprComponentsDev:/components"

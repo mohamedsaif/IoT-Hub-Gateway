@@ -396,3 +396,15 @@ src/gateway-server/IoTHubGateway.Server/k8s/deployment.yaml
 /src/gateway-server/IoTHubGateway.Server/Properties/serviceDependencies.json
 /src/gateway-server/IoTHubGateway.Server/Dockerfile-old2
 /src/gateway-server/IoTHubGateway.Server/Dockerfile-aks-core2
+**/DaprComponentsDev/*
+/src/GatewayOrchestrator/Properties/ServiceDependencies/local/appInsights1.arm.json
+/src/GatewayOrchestrator/Properties/serviceDependencies.local.json
+/src/GatewayOrchestrator/Properties/serviceDependencies.json
+/src/GatewayOrchestrator/appsettings.Development.json
+/src/GatewayTranslator/appsettings.Development.json
+/src/GatewayTranslator/Samples/*
+/src/GatewayOrchestrator/Samples/sb-sample.json
+/src/GatewayOrchestrator/Dockerfile.original
+/src/GatewayTranslator/Dockerfile.original
+/src/GatewayOrchestrator/DeploymentsDev/*
+/src/GatewayTranslator/DeploymentsDev
