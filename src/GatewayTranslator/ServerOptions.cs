@@ -14,6 +14,11 @@ namespace GatewayTranslator
         public string AppVersion { get; set; }
 
         /// <summary>
+        /// Indicates if messages processing is simulated or actual (simlation can happen without depending on IoT-Hub-Server service)
+        /// </summary>
+        public bool SimulationMode { get; set; }
+
+        /// <summary>
         /// Url to iot-hub gateway server to post the messages to
         /// </summary>
         public string GatewayServerHost { get; set; }

@@ -45,8 +45,16 @@ Installing KEDA on the AKS cluster using helm v3 (just ensure the current kubect
 
 helm repo add kedacore https://kedacore.github.io/charts
 helm repo update
-kubectl create namespace keda
-helm install keda kedacore/keda --namespace keda
+helm search repo kedacore --devel --versions
+
+helm upgrade --install keda kedacore/keda \
+--version=2.6.1 \
+--namespace keda \
+--create-namespace \
+--wait
+
+# Veritfy installation of keda
+kubectl get all -n keda
 
 # Uninstall
 # helm uninstall keda -n keda
@@ -123,6 +131,49 @@ kubectl get pods --namespace dapr
 # dapr-placement-server-0                 1/1     Running   0          4m35s
 # dapr-sentry-68776c58b5-k4s4d            1/1     Running   0          4m35s
 # dapr-sidecar-injector-66c878c8b-vt85p   1/1     Running   0          4m35s
+
+```
+
+### Dapr on AKS Production
+
+Although you can use Dapr CLI to install dapr on AKS, it is recommended to use Helm (directly or via CI/CD pipelines like GitHub Actions).
+
+For full documentation on these recommendations, check [dapr docs](https://docs.dapr.io/operations/hosting/kubernetes/kubernetes-production/#enabling-high-availability-in-an-existing-dapr-deployment)
+
+To install through Helm, use the following:
+
+```bash
+
+helm repo add dapr https://dapr.github.io/helm-charts/
+helm repo update
+# See which chart versions are available
+helm search repo dapr --devel --versions
+
+helm upgrade --install dapr dapr/dapr \
+--version=1.6 \
+--namespace dapr-system \
+--create-namespace \
+--set global.ha.enabled=true \
+--wait
+
+# Verify installation
+kubectl get pods --namespace dapr-system
+# or using dapr CLI
+dapr status -k
+
+# note to uninstall
+# helm uninstall dapr --namespace dapr-system
+
+# to upgrade with zero down time:
+# 1. update the CLI (if being in use)
+
+# 2. Update dapr control plane
+# helm repo update
+# helm upgrade dapr dapr/dapr --version 1.6.0 --namespace dapr-system --wait
+
+# 3. Update dapr data plane (side cars)
+# kubectl rollout restart deploy/<DEPLOYMENT-NAME>
+
 
 ```
 
