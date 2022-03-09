@@ -45,7 +45,7 @@ namespace GatewayTranslator.Controllers
         [Route("version")]
         public async Task<IActionResult> GetHealth()
         {
-            return Ok($"Service is running version ({serverOptions.AppVersion})");
+            return Ok($"Service is running version ({serverOptions.AppVersion}) and Simulation Mode is ({serverOptions.SimulationMode})");
         }
 
         [HttpPost]
@@ -72,6 +72,13 @@ namespace GatewayTranslator.Controllers
                     var payload = new StringContent(messageJsonString, Encoding.UTF8, "application/json");
                     var gatewayHost = serverOptions.GatewayServerHost;
                     var getewayRequestUrl = $"{gatewayHost}/{deviceId}";
+
+                    if(serverOptions.SimulationMode)
+                    {
+                        logger.LogInformation($"SB triggered Gateway Translator completed SIMULATION successfully for: {d2cMessage}");
+                        return new OkObjectResult("Message simlation posted successfully");
+                    }
+
                     using (var httpClient = httpClientFactory.CreateClient())
                     {
                         var result = await httpClient.PostAsync(getewayRequestUrl, payload);

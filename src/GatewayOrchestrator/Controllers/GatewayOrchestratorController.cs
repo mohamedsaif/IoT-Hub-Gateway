@@ -41,7 +41,7 @@ namespace GatewayOrchestrator.Controllers
         [Route("version")]
         public async Task<IActionResult> GetVersion()
         {
-            return Ok($"Service running version ({serverOptions.AppVersion}");
+            return Ok($"Service running version ({serverOptions.AppVersion})");
         }
 
         /// <summary>
