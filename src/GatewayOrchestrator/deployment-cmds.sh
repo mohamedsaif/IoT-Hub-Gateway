@@ -59,8 +59,9 @@ docker compose up
 # Handling the secrets if you want to use the provided -secrets.yaml file
 # You need to encode the literal value to base64 before adding it to the file
 # Note: Service bus connection string needs to have receive permission and DON'T include the "EntityPath"
-echo -n "REPLACE_SERVICE_BUS_CONNECTION" | base64 -w 0
-echo -n "REPLACE_APPINSIGHTS_CONNECTIONSTRING" | base64 -w 0
+# Replace both REPLACE_SERVICE_BUS_CONNECTION and REPLACE_APPINSIGHTS_CONNECTIONSTRING with relevant values
+echo -n "InstrumentationKey=REPLACE;IngestionEndpoint=https://REPLACE.applicationinsights.azure.com/" | base64 -w 0
+echo -n "Endpoint=sb://REPLACE.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=REPALCE" | base64 -w 0
 cd Deployment
 
 # Namespace deployment is optional if the namespace already exists
@@ -83,7 +84,7 @@ kubectl get all -n iot-hub-gateway
 # Test without a public IP (you can use Postman with localhost:6111/api/GatewayOrchestrator?deviceId=REPLACE-WITH-DEVICE-ID)
 kubectl port-forward service/gateway-orchestrator-http-service 6111:80 -n iot-hub-gateway
 
-# Diagnotics tips
+# Diagnostics tips
 kubectl logs -n iot-hub-gateway -f pod/gateway-orchestrator-http-REPLACE-RANDOM
 kubectl describe -n iot-hub-gateway pod/gateway-orchestrator-http-REPLACE-RANDOM
 kubectl exec -it -n iot-hub-gateway pod/gateway-orchestrator-http-REPLACE-RANDOM /bin/bash
