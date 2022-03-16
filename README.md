@@ -91,43 +91,6 @@ To over come this limitation, I've included a **Docker Compose** project in each
 
 Docker compose file includes not only your application docker container, but also Dapr side-car container as well and establish communications between them (Dapr side-car communicate directly with your app container through gRPC by default).
 
-### Dapr AKS Extension
-
-```shell
-
-AKS_NAME=aks-weu
-AKS_RG=aks-weu
-
-az extension add --name k8s-extension
-az extension update --name k8s-extension
-
-# Enabling the features on the subscription
-az feature register --namespace "Microsoft.ContainerService" --name "AKS-ExtensionManager"
-az feature register --namespace "Microsoft.ContainerService" --name "AKS-Dapr"
-# Checking the feature registration status
-az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/AKS-ExtensionManager')].{Name:name,State:properties.state}"
-az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/AKS-Dapr')].{Name:name,State:properties.state}"
-
-# Refresh the existing registrations
-az provider register --namespace Microsoft.KubernetesConfiguration
-az provider register --namespace Microsoft.ContainerService
-
-# Enabling the extension on existing AKS
-az k8s-extension create \
-    --cluster-type managedClusters \
-    --cluster-name $AKS_NAME \
-    --resource-group $AKS_RG \
-    --name managedDaprExtension \
-    --auto-upgrade-minor-version true \
-    --configuration-settings "global.ha.enabled=true" \
-    --configuration-settings "dapr_operator.replicaCount=2" \
-    --extension-type Microsoft.Dapr
-
-# Checking the deployment pods
-kubectl get pods -n dapr-system
-
-```
-
 # Deployment procedure
 
 ## Main components
@@ -139,7 +102,7 @@ Main components of the project consists of the following:
 ## Azure services required
 To deploy the platform, you will need the following Azure Services provisioned:
 - AKS Cluster with appropriate size (load test done with 20K concurrent devices with 8 D8s worker nodes)
-- Service Bus Name Space (standard or premium based on expected load) with at least one topic named [d2c-messages]
+- Service Bus Name Space (standard or premium based on expected load) with at least one topic named [d2c-messages] with shared access signature to be used by the platform
 - IoT Hub with appropriate scale (load test done with 5 units of S2 but experienced several throttling due to reaching the limits. If this a problem consider using S3 instead)
 
 ## AKS Deployment
@@ -171,7 +134,7 @@ kubectl get pods --namespace dapr
 
 ```
 
-### Dapr on AKS Production
+### Dapr on AKS (using Helm)
 
 Although you can use Dapr CLI to install dapr on AKS, it is recommended to use Helm (directly or via CI/CD pipelines like GitHub Actions).
 
@@ -211,6 +174,43 @@ dapr status -k
 # 3. Update dapr data plane (side cars)
 # kubectl rollout restart deploy/<DEPLOYMENT-NAME>
 
+
+```
+
+### Dapr on AKS (using Azure Arc extension)
+
+```shell
+
+AKS_NAME=aks-weu
+AKS_RG=aks-weu
+
+az extension add --name k8s-extension
+az extension update --name k8s-extension
+
+# Enabling the features on the subscription
+az feature register --namespace "Microsoft.ContainerService" --name "AKS-ExtensionManager"
+az feature register --namespace "Microsoft.ContainerService" --name "AKS-Dapr"
+# Checking the feature registration status
+az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/AKS-ExtensionManager')].{Name:name,State:properties.state}"
+az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/AKS-Dapr')].{Name:name,State:properties.state}"
+
+# Refresh the existing registrations
+az provider register --namespace Microsoft.KubernetesConfiguration
+az provider register --namespace Microsoft.ContainerService
+
+# Enabling the extension on existing AKS
+az k8s-extension create \
+    --cluster-type managedClusters \
+    --cluster-name $AKS_NAME \
+    --resource-group $AKS_RG \
+    --name managedDaprExtension \
+    --auto-upgrade-minor-version true \
+    --configuration-settings "global.ha.enabled=true" \
+    --configuration-settings "dapr_operator.replicaCount=3" \
+    --extension-type Microsoft.Dapr
+
+# Checking the deployment pods
+kubectl get pods -n dapr-system
 
 ```
 

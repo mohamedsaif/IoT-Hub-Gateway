@@ -411,3 +411,4 @@ src/gateway-server/IoTHubGateway.Server/k8s/deployment.yaml
 **/Deployment-Dev
 src/legacy-services/gateway-orchestrator/local.settings.json
 src/legacy-services/gateway-translator/local.settings.json
+

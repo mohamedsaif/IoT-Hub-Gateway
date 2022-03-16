@@ -50,7 +50,7 @@ namespace GatewayOrchestrator.Controllers
         /// <param name="entityId">The id of the entity subject of the request, this will be device id registered with IoT Hub in case of IoT Hub server integation</param>
         /// <param name="payload">The device status message payload in dynamic json format</param>
         /// <returns></returns>
-        [HttpPost("{entityId}")]
+        [HttpPost]
         public async Task<IActionResult> ProcessRequest(string entityId, [FromBody] dynamic payload)
         {
             logger.LogInformation("GatewayOrchestrator: HTTP trigger starting a request.");
