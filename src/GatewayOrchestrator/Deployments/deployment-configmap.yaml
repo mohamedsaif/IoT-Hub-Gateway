@@ -1,0 +1,25 @@
+﻿kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: gateway-orchestrator-cm
+  namespace: iot-hub-gateway
+  labels:
+    app: gateway-orchestrator-http
+data:
+  appsettings.json: |-
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft": "Warning",
+          "Microsoft.Hosting.Lifetime": "Information"
+        }
+      },
+      "ASPNETCORE_ENVIRONMENT": "Production",
+      "OrchestratorType": "K8S"
+      "ServerOptions": {
+        "GatewayServerHost": "http://gateway-server-http-service.svc.iot-hub-gateway.cluster.local/iot-gateway",
+        "ServiceBusName": "gateway-servicebus",
+        "ServiceBusTopic": "d2c-messages"
+      }
+    }

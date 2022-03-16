@@ -1,0 +1,21 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: appsettings
+  namespace: iot-hub-gateway
+data:
+  appsettings.json: |-
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft": "Warning",
+          "Microsoft.Hosting.Lifetime": "Information"
+        }
+      },
+      "ServerOptions": {
+        "GatewayServerHost": "http://gateway-server-http-service.svc.iot-hub-gateway.cluster.local/iot-gateway",
+        "ServiceBusName": "gateway-servicebus",
+        "ServiceBusTopic": "d2c-messages"
+      }
+    }

@@ -1,0 +1,34 @@
+﻿version: '3.4'
+
+services:
+  gateway-orchestrator:
+    image: ${DOCKER_REGISTRY-}gateway-orchestrator
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5100:80"
+      - "50002:50002"
+    environment:
+      - DAPR_GRPC_PORT=50002
+    depends_on:
+      - redis
+      - placement
+    networks:
+      - gateway-dapr
+  gateway-orchestrator-dapr:
+    image: "daprio/daprd:1.2.0"
+    command: ["./daprd",
+     "-app-id", "gateway-orchestrator",
+     "-app-port", "80",
+     "-metrics-port", "9091",
+     "-log-level", "debug",
+     "-config", "components/dapr-config.yaml",
+     "-dapr-grpc-port", "50002",
+     "-components-path", "/components"]
+    volumes:
+        - "./DaprComponentsDev:/components"
+        - "./certificates/:/certificates"
+    depends_on:
+      - gateway-orchestrator
+    network_mode: "service:gateway-orchestrator"
