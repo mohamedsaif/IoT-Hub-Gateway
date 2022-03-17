@@ -16,7 +16,7 @@ data:
       "ServerOptions": {
         "AppVersion": "V1.0",
         "SimulationMode": true,
-        "GatewayServerHost": "http://gateway-server-http-service.svc.iot-hub-gateway.cluster.local/iot-gateway",
+        "GatewayServerHost": "http://gateway-server-http-service.iot-hub-gateway.svc.cluster.local/iot-gateway",
         "ServiceBusName": "gateway-servicebus",
         "ServiceBusTopic": "d2c-messages"
       }
