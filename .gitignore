@@ -412,3 +412,4 @@ src/gateway-server/IoTHubGateway.Server/k8s/deployment.yaml
 src/legacy-services/gateway-orchestrator/local.settings.json
 src/legacy-services/gateway-translator/local.settings.json
 
+src/azure-load-test/sample.jmx
