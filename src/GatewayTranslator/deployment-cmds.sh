@@ -68,6 +68,9 @@ cd Deployment
 kubectl apply -f deployment-namespace.yaml
 # Update the secrets with the required base64 values using the command above
 kubectl apply -f deployment-secrets.yaml
+
+kubectl apply -f deployment-configmap.yaml
+
 kubectl apply -f deployment.yaml
 # Apply this only after installing KEDA
 kubectl apply -f deployment-keda.yaml
@@ -77,7 +80,20 @@ kubectl get all -n iot-hub-gateway
 # Check the KEDA scaled object
 kubectl get scaledobject -n iot-hub-gateway
 
+# Testing
+
+# Using port-forward
+WORKLOAD_POD=$(kubectl get pods -n iot-hub-gateway -l app=gateway-translator-sb -o jsonpath='{.items[0].metadata.name}')
+echo $WORKLOAD_POD
+kubectl port-forward -n iot-hub-gateway pod/$WORKLOAD_POD 8081:80
+curl http://localhost:8080/api/GatewayTranslator/version
+
 # Diagnotics tips
+WORKLOAD_POD=$(kubectl get pods -n iot-hub-gateway -l app=gateway-translator-sb -o jsonpath='{.items[0].metadata.name}')
+echo $WORKLOAD_POD
+kubectl logs -n iot-hub-gateway $WORKLOAD_POD -c gateway-translator-sb
+kubectl logs -n iot-hub-gateway $WORKLOAD_POD -c daprd
+
 kubectl logs -n iot-hub-gateway -f pod/gateway-translator-sb-REPLACE-RANDOM
 kubectl describe -n iot-hub-gateway pod/gateway-translator-sb-REPLACE-RANDOM
 kubectl exec -it -n iot-hub-gateway pod/gateway-translator-sb-REPLACE-RANDOM /bin/bash

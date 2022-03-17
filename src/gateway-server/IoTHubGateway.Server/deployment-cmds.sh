@@ -63,7 +63,22 @@ kubectl apply -f deployment-service.yaml
 kubectl get all -n iot-hub-gateway
 
 # Test without a public IP (you can use Postman with localhost:6111/api/GatewayOrchestrator?deviceId=REPLACE-WITH-DEVICE-ID)
-kubectl port-forward service/gateway-server-http-service 6111:80 -n iot-hub-gateway
+kubectl port-forward service/gateway-server-http-service 8082:80 -n iot-hub-gateway
+curl http://localhost:8082/iot-gateway
+
+# Using public IP: get the service IP
+SERVICE_EXTERNAL_IP=$(kubectl get service \
+    gateway-server-http-service \
+    -n iot-hub-gateway \
+    -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+echo $SERVICE_EXTERNAL_IP
+curl http://$SERVICE_EXTERNAL_IP/iot-gateway
+
+# Diagnotics tips
+WORKLOAD_POD=$(kubectl get pods -n iot-hub-gateway -l app=gateway-orchestrator-http -o jsonpath='{.items[0].metadata.name}')
+echo $WORKLOAD_POD
+kubectl logs -n iot-hub-gateway $WORKLOAD_POD -c gateway-orchestrator-http
+kubectl logs -n iot-hub-gateway $WORKLOAD_POD -c daprd
 
 # Diagnotics tips
 kubectl logs -n iot-hub-gateway -f pod/gateway-server-http-REPLACE-RANDOM
