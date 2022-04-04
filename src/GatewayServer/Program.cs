@@ -1,5 +1,7 @@
 using GatewayServer.Models;
+using GatewayServer.Repositories;
 using GatewayServer.Utils;
+using Microsoft.Extensions.Caching.Distributed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,9 @@ var daprGrpcPort = Environment.GetEnvironmentVariable("DAPR_GRPC_PORT") ?? "6000
 builder.Services.AddDaprClient(builder => builder
     .UseHttpEndpoint($"http://localhost:{daprHttpPort}")
     .UseGrpcEndpoint($"http://localhost:{daprGrpcPort}"));
+
+// Distributed Cache
+builder.Services.AddSingleton<IDistributedCache, DaprDeviceCacheRepository>();
 
 // Gateway Server
 var runnerConfigs = RunnerConfiguration.Load(builder.Configuration);

@@ -80,7 +80,7 @@ namespace GatewayServer.Services
                 }
             }
 
-            return new IotHubSender(device, deviceId, config);
+            return new IoTHubSender(device, deviceId, config);
         }
     }
 }

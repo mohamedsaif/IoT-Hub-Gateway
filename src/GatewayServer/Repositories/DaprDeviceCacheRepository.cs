@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace GatewayServer.Repositories
 {
-    public class DeviceCacheRepository : IDistributedCache
+    public class DaprDeviceCacheRepository : IDistributedCache
     {
         private const string CACHE_STORE_NAME = "devicestatestore";
         private DaprClient daprClient;
 
-        public DeviceCacheRepository(DaprClient daprClient)
+        public DaprDeviceCacheRepository(DaprClient daprClient)
         {
             this.daprClient = daprClient;
         }

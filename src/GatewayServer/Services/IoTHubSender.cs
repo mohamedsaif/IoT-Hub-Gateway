@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace GatewayServer.Services
 {
-    public class IotHubSender : SenderBase<Message>
+    public class IoTHubSender : SenderBase<Message>
     {
         const string ApplicationJsonContentType = "application/json";
         const string Utf8Encoding = "utf-8";
 
         private readonly DeviceClient deviceClient;
 
-        public IotHubSender(DeviceClient deviceClient, string deviceId, RunnerConfiguration config)
+        public IoTHubSender(DeviceClient deviceClient, string deviceId, RunnerConfiguration config)
             : base(deviceId, config)
         {
             this.deviceClient = deviceClient;
