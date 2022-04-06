@@ -29,6 +29,7 @@ namespace GatewayOrchestrator
         {
             var options = new ServerOptions();
             Configuration.GetSection(nameof(ServerOptions)).Bind(options);
+            options.AppVersion = string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("AppVersion")) ? "NA" : System.Environment.GetEnvironmentVariable("AppVersion");
             services.AddSingleton<ServerOptions>(options);
 
             RegisterAppInsights(services);
@@ -71,8 +72,7 @@ namespace GatewayOrchestrator
 
         private void RegisterAppInsights(IServiceCollection services)
         {
-            string appInsightsConnection = Configuration["APPINSIGHTS_CONNECTIONSTRING"];
-            services.AddApplicationInsightsTelemetry(appInsightsConnection);
+            services.AddApplicationInsightsTelemetry(Configuration);
             services.AddApplicationInsightsKubernetesEnricher();
         }
     }

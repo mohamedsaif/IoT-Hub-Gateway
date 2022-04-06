@@ -408,7 +408,7 @@ src/gateway-server/IoTHubGateway.Server/k8s/deployment.yaml
 /src/GatewayTranslator/Dockerfile.original
 /src/GatewayOrchestrator/DeploymentsDev/*
 /src/GatewayTranslator/DeploymentsDev
-**/Deployment-Dev
+**/DeploymentsDev
 src/legacy-services/gateway-orchestrator/local.settings.json
 src/legacy-services/gateway-translator/local.settings.json
 
@@ -419,3 +419,4 @@ src/azure-load-test/sample.jmx
 /src/GatewayServer-old/appsettings.Development.json
 /src/IoTGatewayServer/Properties
 src/legacy-services/*
+src/GatewayOrchestrator/Deployments/deployment-configmap.yaml

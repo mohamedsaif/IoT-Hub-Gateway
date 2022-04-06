@@ -18,7 +18,6 @@ data:
       "ASPNETCORE_ENVIRONMENT": "Production",
       "OrchestratorType": "K8S"
       "ServerOptions": {
-        "GatewayServerHost": "http://gateway-server-http-service.svc.iot-hub-gateway.cluster.local/iot-gateway",
         "ServiceBusName": "gateway-servicebus",
         "ServiceBusTopic": "d2c-messages",
         "EntityIdAttributeName": "structure.id"

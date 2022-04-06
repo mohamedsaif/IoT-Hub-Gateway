@@ -20,6 +20,7 @@ az acr build -t iothub/gateway-orchestrator:{{.Run.ID}} -t iothub/gateway-orches
 # deployment-secrets.yaml: connectionString: with service bus connection string and APPINSIGHTS_CONNECTIONSTRING: connection string
 
 # Adding services
+kubectl create namespace iot-hub-gateway # ONLY needed once
 kubectl apply -f ./Deployments/components
 kubectl apply -f ./Deployments
 
@@ -29,6 +30,10 @@ kubectl get pod,svc -n iot-hub-gateway
 # Test the APIs
 kubectl port-forward -n iot-hub-gateway service/gateway-orchestrator-http-service 8080:80
 curl http://localhost:8080/api/GatewayOrchestrator/version
+
+# Useful commands
+# Restart the deployment
+kubectl rollout restart deployment -n iot-hub-gateway gateway-orchestrator-http-deployment
 
 ##############
 # Translator #
@@ -54,6 +59,10 @@ echo $WORKLOAD_POD
 kubectl port-forward -n iot-hub-gateway pod/$WORKLOAD_POD 8081:80
 curl http://localhost:8080/api/GatewayTranslator/version
 
+# Useful commands
+# Restart the deployment
+kubectl rollout restart deployment -n iot-hub-gateway gateway-translator-sb-deployment
+
 ##################
 # Gateway Server #
 ##################
@@ -66,6 +75,7 @@ az acr build -t iothub/gateway-server:{{.Run.ID}} -t iothub/gateway-server:lates
 # deployment-secrets.yaml: connectionString: with IoT Hub connection string and APPINSIGHTS_CONNECTIONSTRING: connection string
 
 # Adding services
+kubectl apply -f ./Deployments/components
 kubectl apply -f ./Deployments
 
 # Validate
@@ -74,6 +84,11 @@ kubectl get pod,svc -n iot-hub-gateway
 # Test the APIs
 kubectl port-forward service/gateway-server-http-service 8082:80 -n iot-hub-gateway
 curl http://localhost:8082/api/gateway
+
+# Useful commands
+# Restart the deployment
+kubectl rollout restart deployment -n iot-hub-gateway gateway-server-http-deployment
+
 
 ##########
 # Zipkin #

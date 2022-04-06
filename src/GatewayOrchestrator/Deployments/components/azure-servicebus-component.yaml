@@ -20,7 +20,7 @@ spec:
   - name: disableEntityManagement # Optional
     value: "true"
   - name: maxDeliveryCount # Optional
-    value: 3
+    value: 10
   - name: lockDurationInSec # Optional
     value: 60
   - name: lockRenewalInSec # Optional
