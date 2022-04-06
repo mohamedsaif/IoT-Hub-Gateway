@@ -29,7 +29,7 @@ spec:
         - containerPort: 80
         env:
         - name: AppVersion
-          value: v1.0
+          value: v2.0
         envFrom:
         - configMapRef:
             name: gateway-orchestrator-cm

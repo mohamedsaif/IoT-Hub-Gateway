@@ -33,7 +33,7 @@ spec:
         - name: DAPR_GRPC_PORT
           value: "60000"
         - name: AppVersion
-          value: v1.0
+          value: v2.0
         envFrom:
           - secretRef:
               name: gateway-server
@@ -60,4 +60,3 @@ spec:
               cpu: 500m
       dnsPolicy: ClusterFirst
       serviceAccountName: gateway-server-svc-act
----
