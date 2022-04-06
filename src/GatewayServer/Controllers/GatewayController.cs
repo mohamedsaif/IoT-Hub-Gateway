@@ -51,22 +51,6 @@ namespace GatewayServer.Controllers
                 var deviceFactory = new DeviceFactory(deviceId, runnerConfigs, daprClient, runnerStats);
                 await deviceFactory.Device.Sender.SendMessageAsync(payload.ToString(), runnerStats, CancellationToken.None);
 
-                //var sasToken = this.ControllerContext.HttpContext.Request.Headers[Constants.SasTokenHeaderName].ToString();
-                //if (!string.IsNullOrEmpty(sasToken))
-                //{
-                //    var tokenExpirationDate = ResolveTokenExpiration(sasToken);
-                //    if (!tokenExpirationDate.HasValue)
-                //        tokenExpirationDate = DateTime.UtcNow.AddMinutes(20);
-
-                //    await gatewayService.SendDeviceToCloudMessageByToken(deviceId, payload.ToString(), sasToken, tokenExpirationDate.Value);
-                //}
-                //else
-                //{
-                //    if (!this.options.SharedAccessPolicyKeyEnabled)
-                //        return BadRequest(new { error = "Shared access is not enabled" });
-                //    await gatewayService.SendDeviceToCloudMessageBySharedAccess(deviceId, payload.ToString());
-                //}
-
                 return Ok();
             }
             catch (Exception ex)

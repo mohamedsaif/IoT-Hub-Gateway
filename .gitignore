@@ -418,3 +418,4 @@ src/azure-load-test/sample.jmx
 /src/GatewayServer/Properties
 /src/GatewayServer-old/appsettings.Development.json
 /src/IoTGatewayServer/Properties
+src/legacy-services/*

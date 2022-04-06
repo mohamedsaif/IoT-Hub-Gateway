@@ -7,7 +7,7 @@ metadata:
   labels:
     app: gateway-server-http
 spec:
-  replicas: 6
+  replicas: 1
   selector:
     matchLabels:
       app: gateway-server-http
@@ -15,27 +15,24 @@ spec:
     metadata:
       labels:
         app: gateway-server-http
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "gateway-server"
+        dapr.io/app-port: "80"
+        dapr.io/config: "tracing"
     spec:
       containers:
       - name: gateway-server
-        image: REPLACE-ACR-NAME.azurecr.io/iothub/gateway-server:latest
+        image: REPLACE.azurecr.io/iothub/gateway-server:latest
         imagePullPolicy: Always
         env:
-        - name: ServerOptions__SharedAccessPolicyKeyEnabled
-          value: "true"
-        - name: ServerOptions__DirectMethodEnabled
+        - name: IsCacheEnabled
           value: "false"
-        - name: ServerOptions__CloudMessagesEnabled
-          value: "false"
-        - name: ServerOptions__DeviceOperationTimeout
-          value: "30000"
-        - name: ServerOptions__DefaultDeviceCacheInMinutes
-          value: "5"
-        - name: ServerOptions__CreateDevices
-          value: "false"
-        - name: ServerOptions__IsCacheDisabled
-          value: "false"
-        - name: ServerOptions__AppVersion
+        - name: DAPR_HTTP_PORT
+          value: "3600"
+        - name: DAPR_GRPC_PORT
+          value: "60000"
+        - name: AppVersion
           value: v1.0
         envFrom:
           - secretRef:
@@ -44,17 +41,23 @@ spec:
         - containerPort: 80
         readinessProbe:
           httpGet:
-            path: /iot-gateway
+            path: /api/gateway
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /api/gateway
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 5
         resources:
             limits:
-              memory: 16Gi
-              cpu: 6000m
+              memory: 4Gi
+              cpu: 1000m
             requests:
-              memory: 16Gi
-              cpu: 6000m
+              memory: 2Gi
+              cpu: 500m
       dnsPolicy: ClusterFirst
       serviceAccountName: gateway-server-svc-act
 ---

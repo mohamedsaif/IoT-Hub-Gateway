@@ -20,8 +20,9 @@ builder.Services.AddDaprClient(builder => builder
     .UseHttpEndpoint($"http://localhost:{daprHttpPort}")
     .UseGrpcEndpoint($"http://localhost:{daprGrpcPort}"));
 
+///TODO: Finalize implementation
 // Distributed Cache
-builder.Services.AddSingleton<IDistributedCache, DaprDeviceCacheRepository>();
+//builder.Services.AddSingleton<IDistributedCache, DaprDeviceCacheRepository>();
 
 // Gateway Server
 var runnerConfigs = RunnerConfiguration.Load(builder.Configuration);

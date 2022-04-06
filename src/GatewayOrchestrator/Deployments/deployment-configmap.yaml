@@ -20,6 +20,7 @@ data:
       "ServerOptions": {
         "GatewayServerHost": "http://gateway-server-http-service.svc.iot-hub-gateway.cluster.local/iot-gateway",
         "ServiceBusName": "gateway-servicebus",
-        "ServiceBusTopic": "d2c-messages"
+        "ServiceBusTopic": "d2c-messages",
+        "EntityIdAttributeName": "structure.id"
       }
     }

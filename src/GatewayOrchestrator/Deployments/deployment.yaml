@@ -19,10 +19,11 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/app-id: "gateway-orchestrator"
         dapr.io/app-port: "80"
+        dapr.io/config: "tracing"
     spec:
       containers:
       - name: gateway-orchestrator-http
-        image: REPLACE-ACR-NAME.azurecr.io/iothub/gateway-orchestrator:latest
+        image: REPLACE.azurecr.io/iothub/gateway-orchestrator:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -69,4 +70,3 @@ spec:
               memory: 4Gi
               cpu: 1000m
       serviceAccountName: gateway-orchestrator-svc-act
----

@@ -32,5 +32,11 @@ namespace GatewayTranslator
         /// The service bus topic that will be used by dapr to publish messages to
         /// </summary>
         public string ServiceBusTopic { get; set; }
+
+        /// <summary>
+        /// Set the location of the entity id in the target json payload
+        /// </summary>
+        public string EntityIdAttributeName { get; set; } = "id";
+
     }
 }

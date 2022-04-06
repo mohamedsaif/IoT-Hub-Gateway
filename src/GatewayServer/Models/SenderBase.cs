@@ -43,9 +43,14 @@ namespace GatewayServer.Models
                     stats.IncrementSendTelemetryErrors();
                     await Task.Yield();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     stats.IncrementSendTelemetryErrors();
+                    if (ex is Microsoft.Azure.Devices.Client.Exceptions.DeviceNotFoundException)
+                    {
+                        throw;
+                    }
+
                     await Task.Delay(WaitTimeOnTransientError);
                 }
             }
