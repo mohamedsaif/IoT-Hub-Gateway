@@ -11,13 +11,13 @@ services:
       - "50002:50002"
     environment:
       - DAPR_GRPC_PORT=50002
-    depends_on:
-      - redis
-      - placement
-    networks:
-      - gateway-dapr
+    #depends_on:
+    #  - redis
+    #  - placement
+    #networks:
+    #  - gateway-dapr
   gateway-orchestrator-dapr:
-    image: "daprio/daprd:1.2.0"
+    image: "daprio/daprd:1.6.0"
     command: ["./daprd",
      "-app-id", "gateway-orchestrator",
      "-app-port", "80",

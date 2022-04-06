@@ -19,16 +19,17 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/app-id: "gateway-translator"
         dapr.io/app-port: "80"
+        dapr.io/config: "tracing"
     spec:
       containers:
       - name: gateway-translator-sb
-        image: REPLACE-ACR-NAME.azurecr.io/iothub/gateway-translator:latest
+        image: REPLACE.azurecr.io/iothub/gateway-translator:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:
         - name: AppVersion
-          value: v1.0
+          value: v2.0
         envFrom:
         - secretRef:
             name: gateway-translator
@@ -65,4 +66,3 @@ spec:
         configMap:
           name: appsettings
       serviceAccountName: gateway-translator-svc-act
----

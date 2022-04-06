@@ -18,10 +18,9 @@ using System.Threading.Tasks;
 namespace GatewayTranslator.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class GatewayTranslatorController : ControllerBase, IHealthCheck
     {
-        private const string EntityIdAttributeName = "deviceId";
         private DaprClient daprClient;
         private IHttpClientFactory httpClientFactory;
         private ILogger<GatewayTranslatorController> logger;
@@ -38,18 +37,20 @@ namespace GatewayTranslator.Controllers
         [HttpGet]
         public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(HealthCheckResult.Healthy($"Service running version ({serverOptions.AppVersion})"));
+            return Task.FromResult(HealthCheckResult.Healthy(JsonConvert.SerializeObject(
+                new { Message = $"Service running version ({serverOptions.AppVersion})" }
+                )));
         }
 
         [HttpGet]
-        [Route("version")]
-        public async Task<IActionResult> GetHealth()
+        [Route("Version")]
+        public async Task<IActionResult> GetVersion()
         {
-            return Ok($"Service is running version ({serverOptions.AppVersion}) and Simulation Mode is ({serverOptions.SimulationMode})");
+            return Ok(new { Message = $"Service is running version ({serverOptions.AppVersion}) and Simulation Mode is ({serverOptions.SimulationMode})" });
         }
 
         [HttpPost]
-        [Route("iot-gateway")]
+        [Route("Process")]
         [Topic("gateway-servicebus", "d2c-messages")]
         public async Task<ActionResult> ProcessMessage(dynamic d2cMessage)
         {
@@ -62,12 +63,11 @@ namespace GatewayTranslator.Controllers
                 try
                 {
                     JObject message = JObject.Parse(d2cMessageString);
-                    string deviceId = message.Value<string>(EntityIdAttributeName);
+                    var idToken = message.SelectToken(serverOptions.EntityIdAttributeName);
+                    string deviceId = idToken != null ? idToken.Value<string>() : string.Empty;
                     if (string.IsNullOrEmpty(deviceId))
-                        throw new ArgumentException("Invalid payload");
-                    //Remove the id as it no longer needed in the final submission to gateway (id is passed in the request)
-                    message.Remove(EntityIdAttributeName);
-
+                        throw new ArgumentException($"Invalid payload due to no id at ({serverOptions.EntityIdAttributeName})");
+                    
                     var messageJsonString = JsonConvert.SerializeObject(message);
                     var payload = new StringContent(messageJsonString, Encoding.UTF8, "application/json");
                     var gatewayHost = serverOptions.GatewayServerHost;
@@ -76,7 +76,7 @@ namespace GatewayTranslator.Controllers
                     if(serverOptions.SimulationMode)
                     {
                         logger.LogInformation($"SB triggered Gateway Translator completed SIMULATION successfully for: {d2cMessage}");
-                        return new OkObjectResult("Message simlation posted successfully");
+                        return new OkObjectResult(new { Message = "Message simlation posted successfully" });
                     }
 
                     using (var httpClient = httpClientFactory.CreateClient())

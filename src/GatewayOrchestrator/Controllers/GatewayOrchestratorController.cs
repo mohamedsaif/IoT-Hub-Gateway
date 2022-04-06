@@ -18,7 +18,6 @@ namespace GatewayOrchestrator.Controllers
     [ApiController]
     public class GatewayOrchestratorController : ControllerBase, IHealthCheck
     {
-        private const string EntityIdAttributeName = "deviceId";
         private DaprClient daprClient;
         private ILogger<GatewayOrchestratorController> logger;
         private ServerOptions serverOptions;
@@ -34,55 +33,55 @@ namespace GatewayOrchestrator.Controllers
         [HttpGet]
         public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(HealthCheckResult.Healthy($"Service running version ({serverOptions.AppVersion})"));
+            return Task.FromResult(HealthCheckResult.Healthy(
+                JsonConvert.SerializeObject(new { Message = $"Service running version ({serverOptions.AppVersion})" })));
         }
 
         [HttpGet]
         [Route("version")]
         public async Task<IActionResult> GetVersion()
         {
-            return Ok($"Service running version ({serverOptions.AppVersion})");
+            return Ok(new { Message = $"Service running version ({serverOptions.AppVersion})" });
         }
 
         /// <summary>
         /// Accept HTTP request with a payload and push it to the relevant service bus topic for async processing
         /// </summary>
-        /// <param name="entityId">The id of the entity subject of the request, this will be device id registered with IoT Hub in case of IoT Hub server integation</param>
+        /// <param name="targetPlatform">As orchestrator is designed to target multiple processing pipelines, currently the only implemented value is IoTHubServer</param>
         /// <param name="payload">The device status message payload in dynamic json format</param>
         /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> ProcessRequest(string entityId, [FromBody] dynamic payload)
+        [HttpPost("{targetPlatform}")]
+        public async Task<IActionResult> ProcessRequest(string targetPlatform, [FromBody] dynamic payload)
         {
             logger.LogInformation("GatewayOrchestrator: HTTP trigger starting a request.");
 
-            if (string.IsNullOrEmpty(entityId))
+            if (string.IsNullOrEmpty(targetPlatform))
                 return (ActionResult)new BadRequestObjectResult("Invalid request parameters");
 
             if (payload is null)
                 return (ActionResult)new BadRequestObjectResult("Invalid request payload");
 
-            OrchestratorRequest req = JsonConvert.DeserializeObject<OrchestratorRequest>(payload.ToString());
-
-            if(!string.IsNullOrEmpty(req.TargetPlatform))
+            
+            switch (targetPlatform)
             {
-                switch (req.TargetPlatform)
-                {
-                    case "IoTHubServer":
-                        JObject message = JObject.Parse(payload.ToString());
-                        //Here i'm assuming the payload doesn't include the deviceId, adding it here:
-                        if (!message.ContainsKey(EntityIdAttributeName))
-                            message.Add(EntityIdAttributeName, entityId);
-                        //var messageJson = message.ToString();
-                        var messageJson = JsonConvert.SerializeObject(message);
-                        await daprClient.PublishEventAsync<string>(serverOptions.ServiceBusName, serverOptions.ServiceBusTopic, messageJson);
-                        logger.LogInformation($"GatewayOrchestrator: HTTP trigger completed a DEVICE request for enitityId: ({entityId})");
-                        break;
-                    //case "AnotherTargetSystem":
-                        //TODO: add business logic to handle publishing to the relevant bus
-                    default:
-                        throw new ArgumentException("Input invalid");
-                }
+                case "IoTHubServer":
+                    JObject message = JObject.Parse(payload.ToString());
+                    // Validate that the payload include the defined EntityIdAttributeName
+                    var idToken = message.SelectToken(serverOptions.EntityIdAttributeName);
+                    string deviceId = idToken != null ? idToken.Value<string>() : string.Empty;
+                    if (string.IsNullOrEmpty(deviceId))
+                        throw new ArgumentException($"Invalid payload due to no id at ({serverOptions.EntityIdAttributeName})");
+
+                    var messageJson = JsonConvert.SerializeObject(message);
+                    await daprClient.PublishEventAsync<string>(serverOptions.ServiceBusName, serverOptions.ServiceBusTopic, messageJson);
+                    logger.LogInformation($"GatewayOrchestrator: HTTP trigger completed a DEVICE request for enitityId: ({deviceId})");
+                    break;
+                //case "AnotherTargetSystem":
+                    //TODO: add business logic to handle publishing to the relevant bus
+                default:
+                    throw new ArgumentException("Input target platform");
             }
+            
             
             
             return (ActionResult)new OkResult();

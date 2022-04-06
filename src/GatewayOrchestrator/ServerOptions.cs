@@ -22,5 +22,10 @@ namespace GatewayOrchestrator
         /// The service bus topic that will be used by dapr to publish messages to
         /// </summary>
         public string ServiceBusTopic { get; set; }
+
+        /// <summary>
+        /// The entity id json path
+        /// </summary>
+        public string EntityIdAttributeName { get; set; }
     }
 }

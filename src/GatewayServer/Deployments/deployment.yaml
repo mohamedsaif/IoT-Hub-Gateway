@@ -1,0 +1,62 @@
+﻿---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-server-http-deployment
+  namespace: iot-hub-gateway
+  labels:
+    app: gateway-server-http
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-server-http
+  template:
+    metadata:
+      labels:
+        app: gateway-server-http
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "gateway-server"
+        dapr.io/app-port: "80"
+        dapr.io/config: "tracing"
+    spec:
+      containers:
+      - name: gateway-server
+        image: REPLACE.azurecr.io/iothub/gateway-server:latest
+        imagePullPolicy: Always
+        env:
+        - name: IsCacheEnabled
+          value: "false"
+        - name: DAPR_HTTP_PORT
+          value: "3600"
+        - name: DAPR_GRPC_PORT
+          value: "60000"
+        - name: AppVersion
+          value: v2.0
+        envFrom:
+          - secretRef:
+              name: gateway-server
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /api/gateway
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /api/gateway
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+            limits:
+              memory: 4Gi
+              cpu: 1000m
+            requests:
+              memory: 2Gi
+              cpu: 500m
+      dnsPolicy: ClusterFirst
+      serviceAccountName: gateway-server-svc-act

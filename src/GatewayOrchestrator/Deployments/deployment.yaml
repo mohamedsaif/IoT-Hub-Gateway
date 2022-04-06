@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gateway-orchestrator-http
+  name: gateway-orchestrator-http-deployment
   namespace: iot-hub-gateway
   labels:
     app: gateway-orchestrator-http
@@ -19,16 +19,17 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/app-id: "gateway-orchestrator"
         dapr.io/app-port: "80"
+        dapr.io/config: "tracing"
     spec:
       containers:
       - name: gateway-orchestrator-http
-        image: REPLACE-ACR-NAME.azurecr.io/iothub/gateway-orchestrator:latest
+        image: REPLACE.azurecr.io/iothub/gateway-orchestrator:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:
         - name: AppVersion
-          value: v1.0
+          value: v2.0
         envFrom:
         - configMapRef:
             name: gateway-orchestrator-cm
@@ -69,4 +70,3 @@ spec:
               memory: 4Gi
               cpu: 1000m
       serviceAccountName: gateway-orchestrator-svc-act
----
