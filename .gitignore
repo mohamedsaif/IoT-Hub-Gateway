@@ -408,7 +408,7 @@ src/gateway-server/IoTHubGateway.Server/k8s/deployment.yaml
 /src/GatewayTranslator/Dockerfile.original
 /src/GatewayOrchestrator/DeploymentsDev/*
 /src/GatewayTranslator/DeploymentsDev
-**/Deployment-Dev
+**/DeploymentsDev
 src/legacy-services/gateway-orchestrator/local.settings.json
 src/legacy-services/gateway-translator/local.settings.json
 
@@ -423,3 +423,4 @@ src/IoTGatewayServer/Properties/launchSettings.json
 src/IoTGatewayServer/Properties/serviceDependencies.local.json
 src/IoTGatewayServer/Properties/ServiceDependencies/local/appInsights1.arm.json
 src/IoTGatewayServer/Properties/serviceDependencies.json
+src/GatewayServer/DeploymentsDev/deployment-namespace.yaml
