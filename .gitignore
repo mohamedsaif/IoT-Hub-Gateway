@@ -413,10 +413,3 @@ src/legacy-services/gateway-orchestrator/local.settings.json
 src/legacy-services/gateway-translator/local.settings.json
 
 src/azure-load-test/sample.jmx
-/src/GatewayServer/GatewayServer/appsettings.Development.json
-/src/GatewayServer/appsettings.Development.json
-/src/GatewayServer/Properties
-/src/GatewayServer-old/appsettings.Development.json
-/src/IoTGatewayServer/Properties
-src/legacy-services/*
-src/GatewayOrchestrator/Deployments/deployment-configmap.yaml
