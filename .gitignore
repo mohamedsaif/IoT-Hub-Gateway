@@ -420,3 +420,4 @@ src/azure-load-test/sample.jmx
 /src/IoTGatewayServer/Properties
 src/legacy-services/*
 src/GatewayOrchestrator/Deployments/deployment-configmap.yaml
+src/postman-tests/IoT-Hub-Gateway-AKS-v2.postman_collection.json
