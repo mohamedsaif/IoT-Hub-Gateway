@@ -413,3 +413,8 @@ src/legacy-services/gateway-orchestrator/local.settings.json
 src/legacy-services/gateway-translator/local.settings.json
 
 src/azure-load-test/sample.jmx
+src/GatewayServer/Properties/serviceDependencies.json
+src/GatewayServer/appsettings.Development.json
+src/GatewayServer/Properties/launchSettings.json
+src/GatewayServer/Properties/serviceDependencies.local.json
+src/GatewayServer/Properties/ServiceDependencies/local/appInsights1.arm.json

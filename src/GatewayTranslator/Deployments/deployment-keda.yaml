@@ -20,4 +20,3 @@ spec:
       topicName: d2c-messages 
       subscriptionName: gateway-translator
       messageCount: '50' # This will be used to trigger a scale up operation when number of messages exceed this number
----
