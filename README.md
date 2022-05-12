@@ -232,3 +232,5 @@ Specific instructions are specified in each project in a bash script named [depl
 # Testing
 In order to test the functionality of the server, you can use something as simple as [Postman]. 
 Included in the project a Postman template that can be imported for sample requests to target the deployment.
+
+#3
