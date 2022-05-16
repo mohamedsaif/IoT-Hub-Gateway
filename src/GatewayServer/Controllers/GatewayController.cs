@@ -49,7 +49,7 @@ namespace GatewayServer.Controllers
                     return BadRequest(new { error = "Missing payload" });
 
                 var deviceFactory = new DeviceFactory(deviceId, runnerConfigs, daprClient, runnerStats);
-                await deviceFactory.Device.Sender.SendMessageAsync(payload.ToString(), runnerStats, CancellationToken.None);
+                await deviceFactory.Device.Sender.tel(payload.ToString(), runnerStats, CancellationToken.None);
 
                 return Ok();
             }

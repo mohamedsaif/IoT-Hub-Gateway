@@ -233,4 +233,77 @@ Specific instructions are specified in each project in a bash script named [depl
 In order to test the functionality of the server, you can use something as simple as [Postman]. 
 Included in the project a Postman template that can be imported for sample requests to target the deployment.
 
-#3
+## Diagnostics
+
+If there is issues with the deployments, these commands might be helpful in figuring out the root causes:
+
+```bash
+
+
+# Check the deployed resources
+kubectl get all -n iot-hub-gateway
+
+################
+# Orchestrator #
+################
+
+# Testing service using public IP: get the service IP
+SERVICE_EXTERNAL_IP=$(kubectl get service \
+    gateway-orchestrator-http-service \
+    -n iot-hub-gateway \
+    -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+echo $SERVICE_EXTERNAL_IP
+curl http://$SERVICE_EXTERNAL_IP/api/GatewayOrchestrator/version
+
+# Testing service using port-forward
+kubectl port-forward -n iot-hub-gateway service/gateway-orchestrator-http-service 8080:80
+curl http://localhost:8080/api/GatewayOrchestrator/version
+
+# Diagnostics logs
+WORKLOAD_POD=$(kubectl get pods -n iot-hub-gateway -l app=gateway-orchestrator-http -o jsonpath='{.items[0].metadata.name}')
+echo $WORKLOAD_POD
+kubectl logs -n iot-hub-gateway $WORKLOAD_POD -c gateway-orchestrator-http
+kubectl logs -n iot-hub-gateway $WORKLOAD_POD -c daprd
+
+# Diagnostics tips
+kubectl describe -n iot-hub-gateway pod/$WORKLOAD_POD
+kubectl exec -it -n iot-hub-gateway pod/$WORKLOAD_POD /bin/bash
+
+##############
+# Translator #
+##############
+
+# Testing service using public IP: get the service IP
+WORKLOAD_POD=$(kubectl get pods -n iot-hub-gateway -l app=gateway-translator-sb -o jsonpath='{.items[0].metadata.name}')
+echo $WORKLOAD_POD
+kubectl port-forward -n iot-hub-gateway pod/$WORKLOAD_POD 8081:80
+curl http://localhost:8080/api/GatewayTranslator/version
+
+# Diagnostics logs
+WORKLOAD_POD=$(kubectl get pods -n iot-hub-gateway -l app=gateway-translator-sb -o jsonpath='{.items[0].metadata.name}')
+echo $WORKLOAD_POD
+kubectl logs -n iot-hub-gateway $WORKLOAD_POD -c gateway-translator-sb
+kubectl logs -n iot-hub-gateway $WORKLOAD_POD -c daprd
+
+# Diagnostics tips
+kubectl describe -n iot-hub-gateway pod/$WORKLOAD_POD
+kubectl exec -it -n iot-hub-gateway pod/$WORKLOAD_POD /bin/bash
+
+##############
+# Server #
+##############
+
+kubectl port-forward service/gateway-server-http-service 8082:80 -n iot-hub-gateway
+curl http://localhost:8082/api/gateway
+
+# Diagnostics logs
+WORKLOAD_POD=$(kubectl get pods -n iot-hub-gateway -l app=gateway-translator-sb -o jsonpath='{.items[0].metadata.name}')
+echo $WORKLOAD_POD
+kubectl logs -n iot-hub-gateway $WORKLOAD_POD -c gateway-translator-sb
+kubectl logs -n iot-hub-gateway $WORKLOAD_POD -c daprd
+
+# Diagnostics tips
+kubectl describe -n iot-hub-gateway pod/$WORKLOAD_POD
+kubectl exec -it -n iot-hub-gateway pod/$WORKLOAD_POD /bin/bash
+
+```
