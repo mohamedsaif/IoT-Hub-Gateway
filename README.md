@@ -48,7 +48,7 @@ helm repo update
 helm search repo kedacore --devel --versions
 
 helm upgrade --install keda kedacore/keda \
---version=2.6.1 \
+--version=2.7.2 \
 --namespace keda \
 --create-namespace \
 --wait
@@ -74,6 +74,13 @@ Also main [dapr docs](https://docs.dapr.io/) will be a usful resource to check o
 In order to work with Dapr enabled applications on the development machine (sometimes called stand-alone mode), you need to install Dapr CLI to get started.
 
 Follow the steps outlined in the docs to [install Dapr CLI](https://docs.dapr.io/getting-started/install-dapr-cli/) then follow the [initialization process](https://docs.dapr.io/getting-started/install-dapr-selfhost/) to get Dapr docker containers and files up and running
+
+```bash
+
+# Simple installation command (for more visit the above docs link)
+wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
+
+```
 
 After having CLI installed, you can either use something like ```dapr run``` to run your code with Dapr support.
 
@@ -115,26 +122,7 @@ For that, you need to install Dapr primary components on AKS before you can depl
 
 There are couple of ways to [install Dapr on AKS](https://docs.dapr.io/operations/hosting/kubernetes/kubernetes-deploy/) (Dapr CLI or Helm), follow the documentation and install Dapr in the target AKS cluster.
 
-```bash
-
-# Installing using CLI is simple, just make sure that your kubernetes context is set to the right cluster on your machine
-kubectl create namespace dapr
-dapr init -k -n dapr
-# use the below to deploy dapr in High-Availability mode if you wish
-# dapr init -k -n dapr --enable-ha=true
-
-# Validate
-kubectl get pods --namespace dapr
-# NAME                                    READY   STATUS    RESTARTS   AGE
-# dapr-dashboard-76cc799b78-lvfdd         1/1     Running   0          4m35s
-# dapr-operator-5d45c778c4-fb2bz          1/1     Running   0          4m35s
-# dapr-placement-server-0                 1/1     Running   0          4m35s
-# dapr-sentry-68776c58b5-k4s4d            1/1     Running   0          4m35s
-# dapr-sidecar-injector-66c878c8b-vt85p   1/1     Running   0          4m35s
-
-```
-
-### Dapr on AKS (using Helm)
+#### Dapr on AKS (using Helm)
 
 Although you can use Dapr CLI to install dapr on AKS, it is recommended to use Helm (directly or via CI/CD pipelines like GitHub Actions).
 
@@ -150,7 +138,7 @@ helm repo update
 helm search repo dapr --devel --versions
 
 helm upgrade --install dapr dapr/dapr \
---version=1.6 \
+--version=1.7.3 \
 --namespace dapr-system \
 --create-namespace \
 --set global.ha.enabled=true \
@@ -177,7 +165,28 @@ dapr status -k
 
 ```
 
-### Dapr on AKS (using Azure Arc extension)
+#### Using dapr CLI
+
+```bash
+
+# Installing using CLI is simple, just make sure that your kubernetes context is set to the right cluster on your machine
+kubectl create namespace dapr-system
+dapr init -k -n dapr-system
+# use the below to deploy dapr in High-Availability mode if you wish
+# dapr init -k -n dapr --enable-ha=true
+
+# Validate
+kubectl get pods --namespace dapr
+# NAME                                    READY   STATUS    RESTARTS   AGE
+# dapr-dashboard-76cc799b78-lvfdd         1/1     Running   0          4m35s
+# dapr-operator-5d45c778c4-fb2bz          1/1     Running   0          4m35s
+# dapr-placement-server-0                 1/1     Running   0          4m35s
+# dapr-sentry-68776c58b5-k4s4d            1/1     Running   0          4m35s
+# dapr-sidecar-injector-66c878c8b-vt85p   1/1     Running   0          4m35s
+
+```
+
+#### Dapr on AKS (using Azure Arc extension)
 
 ```shell
 
@@ -221,6 +230,22 @@ Once finished successfully, you can find these 4 components running on AKS:
 - **dapr-placement:** Used for actors only. Creates mapping tables that map actor instances to pods
 - **dapr-sentry:** Manages mTLS between services and acts as a certificate authority. For more information read the security overview.
 
+### zipkin distributed tracing
+
+It is useful to have zipkin installed to provide in cluster distributed tracing for additional context on the application performance
+
+```bash
+
+kubectl create deployment zipkin --image openzipkin/zipkin:2.23 -n dapr-system
+kubectl expose deployment zipkin --type ClusterIP --port 9411 -n dapr-system
+
+kubectl port-forward service/zipkin 8083:9411 -n dapr-system
+
+# Opening the below url in the borwser you should zipkin dashboard
+echo http://localhost:8083
+
+```
+
 ### Microservices Deployment
 
 Each service containers a folder called deployment, underneath it all the required YAML manifest for AKS deployment.
@@ -229,8 +254,12 @@ You need to make some adjustments to some of the YAML files to reflect you speci
 
 Specific instructions are specified in each project in a bash script named [deployment-cmds.sh]. Follow these instructions to push each service container to Azure Container Registry and deploy then each service to AKS
 
+For consolidation, you can find a single bash script for all microservices here [src/k8s/setup.sh](/src/k8s/setup.sh)
+
 # Testing
-In order to test the functionality of the server, you can use something as simple as [Postman]. 
+
+In order to test the functionality of the server, you can use something as simple as [Postman](https://www.postman.com/).
+
 Included in the project a Postman template that can be imported for sample requests to target the deployment.
 
 ## Diagnostics
