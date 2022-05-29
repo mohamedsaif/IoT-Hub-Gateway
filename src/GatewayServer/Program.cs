@@ -1,3 +1,4 @@
+using GatewayServer.Controllers;
 using GatewayServer.Models;
 using GatewayServer.Repositories;
 using GatewayServer.Utils;
@@ -9,8 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddApplicationInsightsKubernetesEnricher();
@@ -33,14 +34,20 @@ builder.Services.AddSingleton<RunnerConfiguration>(runnerConfigs);
 var runnerStats = new RunnerStats();
 builder.Services.AddSingleton<RunnerStats>(runnerStats);
 
+builder.Services.AddHealthChecks()
+    .AddCheck<GatewayController>("DefaultHealth");
+
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.MapHealthChecks("/healthz");
 
 app.UseAuthorization();
 

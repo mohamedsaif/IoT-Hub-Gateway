@@ -41,13 +41,13 @@ spec:
         - containerPort: 80
         readinessProbe:
           httpGet:
-            path: /api/gateway
+            path: /heatlhz
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 5
         livenessProbe:
           httpGet:
-            path: /api/gateway
+            path: /heatlhz
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 5

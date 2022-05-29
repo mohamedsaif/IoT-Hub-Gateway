@@ -3,6 +3,8 @@ using GatewayServer.Models;
 using GatewayServer.Services;
 using GatewayServer.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,23 +14,34 @@ using System.Threading.Tasks;
 namespace GatewayServer.Controllers
 {
     [Route("api/[controller]")]
-    public class GatewayController : Controller
+    public class GatewayController : Controller, IHealthCheck
     {
         private RunnerConfiguration runnerConfigs;
         private DaprClient daprClient;
         private RunnerStats runnerStats;
+        private ILogger<GatewayController> logger;
 
-        public GatewayController(RunnerConfiguration runnerConfigs, RunnerStats stats, DaprClient daprClient)
+        public GatewayController(RunnerConfiguration runnerConfigs, RunnerStats stats, DaprClient daprClient, ILogger<GatewayController> logger)
         {
             this.runnerConfigs = runnerConfigs;
             this.daprClient = daprClient;
             this.runnerStats = stats;
+            this.logger = logger;
         }
 
         [HttpGet]
+        [Route("health")]
+        public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(HealthCheckResult.Healthy(
+                JsonConvert.SerializeObject(new { Message = $"Healthy service running version (2.0)" })));
+        }
+
+        [HttpGet]
+        [Route("version")]
         public async Task<IActionResult> Get()
         {
-            return await Task.FromResult<IActionResult>(new ObjectResult(new { Version = "1.0", Cache = runnerConfigs.IsCacheEnabled }));
+            return await Task.FromResult<IActionResult>(new ObjectResult(new { Version = "2.0", Cache = runnerConfigs.IsCacheEnabled }));
         }
 
         /// <summary>
