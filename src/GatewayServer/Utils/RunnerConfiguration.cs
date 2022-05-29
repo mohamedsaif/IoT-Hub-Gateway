@@ -9,8 +9,9 @@ namespace GatewayServer.Utils
     public class RunnerConfiguration
     {
 
-        public string IotHubConnectionString { get; set; }
+        public string? IotHubConnectionString { get; set; }
         public bool IsCacheEnabled { get; set; }
+        public string? TestDeviceId { get; set; }
 
         public void EnsureIsValid()
         {
@@ -30,7 +31,7 @@ namespace GatewayServer.Utils
             var config = new RunnerConfiguration();
             config.IotHubConnectionString = configuration.GetValue<string>(nameof(IotHubConnectionString));
             config.IsCacheEnabled = configuration.GetValue<bool>(nameof(IsCacheEnabled));
-
+            config.TestDeviceId = configuration.GetValue<string>(nameof(TestDeviceId));
             return config;
         }
     }

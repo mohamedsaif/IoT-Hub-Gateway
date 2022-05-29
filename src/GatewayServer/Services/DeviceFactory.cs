@@ -62,13 +62,13 @@ namespace GatewayServer.Services
                     deviceId,
                     new ITransportSettings[]
                     {
-                    new AmqpTransportSettings(Microsoft.Azure.Devices.Client.TransportType.Amqp_Tcp_Only)
-                    {
-                        AmqpConnectionPoolSettings = new AmqpConnectionPoolSettings()
+                        new AmqpTransportSettings(Microsoft.Azure.Devices.Client.TransportType.Amqp_Tcp_Only)
                         {
-                            Pooling = true,
+                            AmqpConnectionPoolSettings = new AmqpConnectionPoolSettings()
+                            {
+                                Pooling = true,
+                            }
                         }
-                    }
                     });
 
                 runnerStats.IncrementDeviceConnected();

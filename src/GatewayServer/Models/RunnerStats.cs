@@ -20,6 +20,8 @@ namespace GatewayServer.Models
 
         public long TotalSendTelemetryErrors => this.totalSendTelemetryErrors;
 
+        public long ConnectedDevices => this.connectedDevices;
+
         public RunnerStats()
         {
             this.messagesSendingStart = DateTime.UtcNow.Ticks;

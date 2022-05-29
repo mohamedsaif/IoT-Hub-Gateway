@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace GatewayServer.Controllers
 {
     [Route("api/[controller]")]
-    public class GatewayController : Controller, IHealthCheck
+    public class GatewayController : Controller
     {
         private RunnerConfiguration runnerConfigs;
         private DaprClient daprClient;
@@ -30,18 +30,17 @@ namespace GatewayServer.Controllers
         }
 
         [HttpGet]
-        [Route("health")]
-        public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult(HealthCheckResult.Healthy(
-                JsonConvert.SerializeObject(new { Message = $"Healthy service running version (2.0)" })));
-        }
-
-        [HttpGet]
         [Route("version")]
         public async Task<IActionResult> Get()
         {
             return await Task.FromResult<IActionResult>(new ObjectResult(new { Version = "2.0", Cache = runnerConfigs.IsCacheEnabled }));
+        }
+
+        [HttpGet]
+        [Route("status")]
+        public async Task<IActionResult> GetStatus()
+        {
+            return await Task.FromResult<IActionResult>(new ObjectResult(runnerStats));
         }
 
         /// <summary>

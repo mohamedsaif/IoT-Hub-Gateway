@@ -28,6 +28,8 @@ spec:
         env:
         - name: IsCacheEnabled
           value: "false"
+        - name: TestDeviceId
+          value: ""
         - name: DAPR_HTTP_PORT
           value: "3600"
         - name: DAPR_GRPC_PORT
@@ -41,13 +43,13 @@ spec:
         - containerPort: 80
         readinessProbe:
           httpGet:
-            path: /heatlhz
+            path: /healthz
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 5
         livenessProbe:
           httpGet:
-            path: /heatlhz
+            path: /healthz
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 5
