@@ -13,6 +13,7 @@ namespace GatewayServer.Models
         long completedDevices;
         long messagesSent;
         long totalSendTelemetryErrors;
+        long totalSendTelemetryTransientErrors;
 
         long messagesSendingStart;
 
@@ -61,6 +62,13 @@ namespace GatewayServer.Models
             var newValue = Interlocked.Increment(ref this.totalSendTelemetryErrors);
             if (newValue % ReportRate == 0)
                 Console.WriteLine($"{DateTime.UtcNow.ToString("o")}: {newValue} errors sending telemetry");
+        }
+
+        internal void IncrementSendTelemetryTransientErrors()
+        {
+            var newValue = Interlocked.Increment(ref this.totalSendTelemetryTransientErrors);
+            if (newValue % ReportRate == 0)
+                Console.WriteLine($"{DateTime.UtcNow.ToString("o")}: {newValue} trans. errors sending telemetry");
         }
     }
 }

@@ -28,6 +28,9 @@ namespace GatewayServer.Models
         public async Task SendMessageAsync(string message, RunnerStats stats, CancellationToken cancellationToken)
         {
             var msg = this.CreateMessage(message);
+            
+            bool isMessageSent = false;
+            Exception lastException = null;
 
             for (var attempt = 1; attempt <= MaxSendAttempts; ++attempt)
             {
@@ -35,12 +38,14 @@ namespace GatewayServer.Models
                 {
                     await this.SendAsync(msg, cancellationToken);
                     stats.IncrementMessageSent();
+                    isMessageSent = true;
                     break;
                     //attempt = 1;
                 }
                 catch (Exception ex) when (this.IsTransientException(ex))
                 {
-                    stats.IncrementSendTelemetryErrors();
+                    stats.IncrementSendTelemetryTransientErrors();
+                    lastException = ex;
                     await Task.Yield();
                 }
                 catch (Exception ex)
@@ -50,9 +55,15 @@ namespace GatewayServer.Models
                     {
                         throw;
                     }
-
+                    lastException = ex;
                     await Task.Delay(WaitTimeOnTransientError);
                 }
+            }
+
+            if(!isMessageSent)
+            {
+                //logger.LogError($"Gateway SEND ERROR for ({deviceId}) after {MaxSendAttempts} attempts - Message{lastException.Message} || {lastException.StackTrace}");
+                throw lastException?? new Exception("No exception details");
             }
         }
 

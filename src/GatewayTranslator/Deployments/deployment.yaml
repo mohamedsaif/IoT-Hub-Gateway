@@ -42,7 +42,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 240
           httpGet:
-            path: /health
+            path: /healthz
             port: 80
             scheme: HTTP
         startupProbe:
@@ -51,7 +51,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 240
           httpGet:
-            path: /health
+            path: /healthz
             port: 80
             scheme: HTTP
         resources:

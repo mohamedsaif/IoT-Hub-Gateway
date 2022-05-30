@@ -420,3 +420,4 @@ src/GatewayServer/Properties/serviceDependencies.local.json
 src/GatewayServer/Properties/ServiceDependencies/local/appInsights1.arm.json
 
 **/*-local*
+res/load-test-results.jpg

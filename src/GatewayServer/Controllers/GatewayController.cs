@@ -55,18 +55,26 @@ namespace GatewayServer.Controllers
             try
             {
                 if (string.IsNullOrEmpty(deviceId))
+                {
+                    logger.LogWarning("Gateway ERROR: No device id");
                     return BadRequest(new { error = "Missing deviceId" });
+                }
 
                 if (payload is null)
+                {
+                    logger.LogWarning("Gateway ERROR: No payload");
                     return BadRequest(new { error = "Missing payload" });
+                }
 
+                //logger.LogInformation($"Gateway: started for {deviceId}");
                 var deviceFactory = new DeviceFactory(deviceId, runnerConfigs, daprClient, runnerStats);
                 await deviceFactory.Device.Sender.SendMessageAsync(payload.ToString(), runnerStats, CancellationToken.None);
-
+                logger.LogInformation($"Gateway SUCCESS: Device ({deviceId}) message sent");
                 return Ok();
             }
             catch (Exception ex)
             {
+                logger.LogError($"Gateway ERROR for ({deviceId}) - Message{ex.Message} || {ex.StackTrace}");
                 return BadRequest(new { Error = ex.Message, Stack = ex.StackTrace });
                 //return new StatusCodeResult(500);
             }

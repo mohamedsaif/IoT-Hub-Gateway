@@ -1,60 +1,37 @@
-﻿using GatewayServer.Services;
-using Microsoft.Azure.Devices.Client;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace GatewayServer.Utils
+namespace GatewayTranslator.Utils
 {
     public class ServiceHealthCheck : IHealthCheck
     {
-        private RunnerConfiguration config;
+        private string serverHost;
 
-        public ServiceHealthCheck(RunnerConfiguration config)
+        public ServiceHealthCheck(string serverHost)
         {
-            this.config = config;
+            this.serverHost = serverHost;
         }
 
         public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
+            var isHealthy = true;
 
-            if(!string.IsNullOrEmpty(config.TestDeviceId))
+            if(isHealthy)
             {
-                try
-                {
-                    
-                    var device = DeviceClient.CreateFromConnectionString(
-                        config.IotHubConnectionString,
-                        config.TestDeviceId,
-                        new ITransportSettings[]
-                        {
-                        new AmqpTransportSettings(Microsoft.Azure.Devices.Client.TransportType.Amqp_Tcp_Only)
-                        {
-                            AmqpConnectionPoolSettings = new AmqpConnectionPoolSettings()
-                            {
-                                Pooling = true,
-                            }
-                        }
-                        });
-                    device.OpenAsync().Wait();
-                    device.CloseAsync().Wait();
-                    return Task.FromResult(HealthCheckResult.Healthy($"Test device ({config.TestDeviceId}) connectivity established"));
-                }
-                catch(Exception ex)
-                {
-                    return Task.FromResult(
+                return Task.FromResult(HealthCheckResult.Healthy($"Translator is healthy configured with gateway server at ({serverHost})"));
+            }
+
+            return Task.FromResult(
                         new HealthCheckResult(
-                            context.Registration.FailureStatus, $"Test device ({config.TestDeviceId}) connectivity failed."));
-                }
-            }
-            else
-            {
-                return Task.FromResult(HealthCheckResult.Healthy("Skipped testing device connectivity"));
-            }
+                            context.Registration.FailureStatus, $"Translator is not healthy."));
         }
 
         public static Task WriteResponse(HttpContext context, HealthReport healthReport)

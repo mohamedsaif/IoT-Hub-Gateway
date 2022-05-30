@@ -23,6 +23,8 @@ namespace GatewayTranslator
         /// </summary>
         public string GatewayServerHost { get; set; }
 
+        public string GatewayServerHealthEndpoint { get; set; }
+
         /// <summary>
         /// The service bus name that will be used by dapr
         /// </summary>

@@ -38,10 +38,6 @@ namespace GatewayServer.Utils
             using (var memoryStream = new MemoryStream(bytes))
                 return (IoTHubSender)binaryFormatter.Deserialize(memoryStream);
         }
-
-
-
-
     }
 
 }
