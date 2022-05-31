@@ -7,7 +7,7 @@ metadata:
   labels:
     app: gateway-orchestrator-http
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: gateway-orchestrator-http
@@ -41,16 +41,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
           httpGet:
-            path: /health
-            port: 80
-            scheme: HTTP
-        startupProbe:
-          failureThreshold: 3
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 5
-          httpGet:
-            path: /health
+            path: /healthz
             port: 80
             scheme: HTTP
         livenessProbe:
@@ -59,14 +50,14 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
           httpGet:
-            path: /health
+            path: /healthz
             port: 80
             scheme: HTTP
         resources:
             limits:
-              memory: 4Gi
+              memory: 2Gi
               cpu: 1000m
             requests:
-              memory: 4Gi
-              cpu: 1000m
+              memory: 1Gi
+              cpu: 500m
       serviceAccountName: gateway-orchestrator-svc-act

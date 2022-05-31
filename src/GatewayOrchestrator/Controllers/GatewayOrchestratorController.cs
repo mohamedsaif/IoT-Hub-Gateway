@@ -16,7 +16,7 @@ namespace GatewayOrchestrator.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GatewayOrchestratorController : ControllerBase, IHealthCheck
+    public class GatewayOrchestratorController : ControllerBase
     {
         private DaprClient daprClient;
         private ILogger<GatewayOrchestratorController> logger;
@@ -31,17 +31,10 @@ namespace GatewayOrchestrator.Controllers
         }
 
         [HttpGet]
-        public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult(HealthCheckResult.Healthy(
-                JsonConvert.SerializeObject(new { Message = $"Service running version ({serverOptions.AppVersion})" })));
-        }
-
-        [HttpGet]
         [Route("version")]
         public async Task<IActionResult> GetVersion()
         {
-            return Ok(new { Message = $"Service running version ({serverOptions.AppVersion})" });
+            return await Task.FromResult<IActionResult>(new ObjectResult(new { Version = serverOptions.AppVersion, EntityIdPath = serverOptions.EntityIdAttributeName }));
         }
 
         /// <summary>
@@ -53,8 +46,6 @@ namespace GatewayOrchestrator.Controllers
         [HttpPost("{targetPlatform}")]
         public async Task<IActionResult> ProcessRequest(string targetPlatform, [FromBody] dynamic payload)
         {
-            logger.LogInformation("GatewayOrchestrator: HTTP trigger starting a request.");
-
             if (string.IsNullOrEmpty(targetPlatform))
                 return (ActionResult)new BadRequestObjectResult("Invalid request parameters");
 
@@ -74,7 +65,7 @@ namespace GatewayOrchestrator.Controllers
 
                     var messageJson = JsonConvert.SerializeObject(message);
                     await daprClient.PublishEventAsync<string>(serverOptions.ServiceBusName, serverOptions.ServiceBusTopic, messageJson);
-                    logger.LogInformation($"GatewayOrchestrator: HTTP trigger completed a DEVICE request for enitityId: ({deviceId})");
+                    logger.LogInformation($"Orchestrator SUCCESS: Proccessed device ({deviceId}) message");
                     break;
                 //case "AnotherTargetSystem":
                     //TODO: add business logic to handle publishing to the relevant bus

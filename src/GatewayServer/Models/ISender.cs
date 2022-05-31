@@ -10,6 +10,6 @@ namespace GatewayServer.Models
     {
         Task OpenAsync();
 
-        Task SendMessageAsync(string message, RunnerStats stats, CancellationToken cancellationToken);
+        Task SendMessageAsync(string message, CancellationToken cancellationToken);
     }
 }

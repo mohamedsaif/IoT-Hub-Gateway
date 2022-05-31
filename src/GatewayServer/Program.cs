@@ -32,8 +32,8 @@ builder.Services.AddDaprClient(builder => builder
 var runnerConfigs = RunnerConfiguration.Load(builder.Configuration);
 builder.Services.AddSingleton<RunnerConfiguration>(runnerConfigs);
 
-var runnerStats = new RunnerStats();
-builder.Services.AddSingleton<RunnerStats>(runnerStats);
+//Adding in-memory cache support
+builder.Services.AddMemoryCache();
 
 builder.Services.AddHealthChecks()
     .AddTypeActivatedCheck<ServiceHealthCheck>("default", args: new object[] { runnerConfigs });

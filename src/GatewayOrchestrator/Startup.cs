@@ -1,5 +1,7 @@
 using GatewayOrchestrator.Controllers;
+using GatewayOrchestrator.Utils;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +44,7 @@ namespace GatewayOrchestrator
             });
 
             services.AddHealthChecks()
-                .AddCheck<GatewayOrchestratorController>("DefaultHealth");
+                .AddCheck<ServiceHealthCheck>("default");
 
         }
 
@@ -66,7 +68,11 @@ namespace GatewayOrchestrator
             {
                 endpoints.MapSubscribeHandler();
                 endpoints.MapControllers();
-                endpoints.MapHealthChecks("/health");
+                endpoints.MapHealthChecks("/healthz");
+                endpoints.MapHealthChecks("/health-details", new HealthCheckOptions
+                {
+                    ResponseWriter = ServiceHealthCheck.WriteResponse
+                });
             });
         }
 

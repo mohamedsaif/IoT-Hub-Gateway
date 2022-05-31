@@ -25,32 +25,32 @@ namespace GatewayServer.Models
 
         public abstract Task OpenAsync();
 
-        public async Task SendMessageAsync(string message, RunnerStats stats, CancellationToken cancellationToken)
+        public async Task SendMessageAsync(string message, CancellationToken cancellationToken)
         {
             var msg = this.CreateMessage(message);
             
             bool isMessageSent = false;
-            Exception lastException = null;
+            Exception? lastException = null;
 
             for (var attempt = 1; attempt <= MaxSendAttempts; ++attempt)
             {
                 try
                 {
                     await this.SendAsync(msg, cancellationToken);
-                    stats.IncrementMessageSent();
+                    RunnerStatusManager.IncrementMessageSent();
                     isMessageSent = true;
                     break;
                     //attempt = 1;
                 }
                 catch (Exception ex) when (this.IsTransientException(ex))
                 {
-                    stats.IncrementSendTelemetryTransientErrors();
+                    RunnerStatusManager.IncrementSendTelemetryTransientErrors();
                     lastException = ex;
                     await Task.Yield();
                 }
                 catch (Exception ex)
                 {
-                    stats.IncrementSendTelemetryErrors();
+                    RunnerStatusManager.IncrementSendTelemetryErrors();
                     if (ex is Microsoft.Azure.Devices.Client.Exceptions.DeviceNotFoundException)
                     {
                         throw;

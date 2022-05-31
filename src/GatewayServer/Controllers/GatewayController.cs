@@ -1,8 +1,8 @@
 ﻿using Dapr.Client;
-using GatewayServer.Models;
 using GatewayServer.Services;
 using GatewayServer.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using System;
@@ -18,15 +18,15 @@ namespace GatewayServer.Controllers
     {
         private RunnerConfiguration runnerConfigs;
         private DaprClient daprClient;
-        private RunnerStats runnerStats;
         private ILogger<GatewayController> logger;
+        private IMemoryCache cache;
 
-        public GatewayController(RunnerConfiguration runnerConfigs, RunnerStats stats, DaprClient daprClient, ILogger<GatewayController> logger)
+        public GatewayController(RunnerConfiguration runnerConfigs, DaprClient daprClient, ILogger<GatewayController> logger, IMemoryCache cache)
         {
             this.runnerConfigs = runnerConfigs;
             this.daprClient = daprClient;
-            this.runnerStats = stats;
             this.logger = logger;
+            this.cache = cache;
         }
 
         [HttpGet]
@@ -40,7 +40,7 @@ namespace GatewayServer.Controllers
         [Route("status")]
         public async Task<IActionResult> GetStatus()
         {
-            return await Task.FromResult<IActionResult>(new ObjectResult(runnerStats));
+            return await Task.FromResult<IActionResult>(new ObjectResult(RunnerStatusManager.RunnerSavedState));
         }
 
         /// <summary>
@@ -67,8 +67,8 @@ namespace GatewayServer.Controllers
                 }
 
                 //logger.LogInformation($"Gateway: started for {deviceId}");
-                var deviceFactory = new DeviceFactory(deviceId, runnerConfigs, daprClient, runnerStats);
-                await deviceFactory.Device.Sender.SendMessageAsync(payload.ToString(), runnerStats, CancellationToken.None);
+                var deviceFactory = new DeviceFactory(deviceId, runnerConfigs, daprClient, cache);
+                await deviceFactory.Device.Sender.SendMessageAsync(payload.ToString(), CancellationToken.None);
                 logger.LogInformation($"Gateway SUCCESS: Device ({deviceId}) message sent");
                 return Ok();
             }
