@@ -37,8 +37,8 @@ namespace GatewayServer.Utils
             config.CacheExpireationWindowSeconds = configuration.GetValue<int?>(nameof(CacheExpireationWindowSeconds))?? 600;
             config.CacheOptions = new MemoryCacheEntryOptions
             {
-                //AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(config.CacheExpireationWindowSeconds),
-                SlidingExpiration = TimeSpan.FromSeconds(config.CacheExpireationWindowSeconds)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(config.CacheExpireationWindowSeconds)
+                //SlidingExpiration = TimeSpan.FromSeconds(config.CacheExpireationWindowSeconds)
             };
             config.CacheOptions.RegisterPostEvictionCallback(RunnerStatusManager.OnPostEviction);
 

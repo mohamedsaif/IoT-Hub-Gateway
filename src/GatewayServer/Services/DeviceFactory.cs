@@ -23,8 +23,8 @@ namespace GatewayServer.Services
         public DeviceFactory(string deviceId, RunnerConfiguration config, DaprClient daprClient, IMemoryCache cache)
         {
             this.daprClient = daprClient;
-            Device = (this.Create(deviceId, config)).Result;
             this.cache = cache;
+            Device = (this.Create(deviceId, config)).Result;
         }
 
         public async Task<CloudDevice> Create(string deviceId, RunnerConfiguration config)

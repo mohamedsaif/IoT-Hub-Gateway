@@ -230,6 +230,14 @@ Once finished successfully, you can find these 4 components running on AKS:
 - **dapr-placement:** Used for actors only. Creates mapping tables that map actor instances to pods
 - **dapr-sentry:** Manages mTLS between services and acts as a certificate authority. For more information read the security overview.
 
+#### Dapr dashboard
+
+```bash
+
+kubectl port-forward -n dapr-system service/dapr-dashboard 8090:8080
+curl http://localhost:8090/
+
+```
 ### zipkin distributed tracing
 
 It is useful to have zipkin installed to provide in cluster distributed tracing for additional context on the application performance

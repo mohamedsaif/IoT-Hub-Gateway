@@ -27,7 +27,7 @@ spec:
         imagePullPolicy: Always
         env:
         - name: IsCacheEnabled
-          value: "false"
+          value: "true"
         - name: "CacheExpireationWindowSeconds"
           value: "600"
         - name: TestDeviceId

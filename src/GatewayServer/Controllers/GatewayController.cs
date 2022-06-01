@@ -74,7 +74,7 @@ namespace GatewayServer.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError($"Gateway ERROR for ({deviceId}) - Message{ex.Message} || {ex.StackTrace}");
+                logger.LogError($"Gateway ERROR: for ({deviceId}) - Message ({ex.Message}) || {ex.StackTrace}");
                 return BadRequest(new { Error = ex.Message, Stack = ex.StackTrace });
                 //return new StatusCodeResult(500);
             }

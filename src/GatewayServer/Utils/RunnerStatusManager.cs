@@ -13,7 +13,7 @@ namespace GatewayServer.Utils
     {
         const long ReportRate = 100;
         
-        public static RunnerStatus RunnerSavedState { get; } = new RunnerStatus();
+        public static RunnerStatus RunnerSavedState { get; }
 
         public static long MessagesSent => RunnerSavedState.messagesSent;
 
@@ -23,6 +23,7 @@ namespace GatewayServer.Utils
 
         static RunnerStatusManager()
         {
+            RunnerSavedState = new RunnerStatus();
             RunnerSavedState.messagesSendingStart = DateTime.UtcNow.Ticks;
         }
 
@@ -37,7 +38,7 @@ namespace GatewayServer.Utils
         {
             var newValue = Interlocked.Decrement(ref RunnerSavedState.connectedDevices);
             if (newValue % ReportRate == 0)
-                Console.WriteLine($"{DateTime.UtcNow.ToString("o")}: {newValue} devices connected");
+                Console.WriteLine($"{DateTime.UtcNow.ToString("o")}: (D) {newValue} devices connected");
         }
 
         internal static void IncrementCompletedDevice()
@@ -86,9 +87,10 @@ namespace GatewayServer.Utils
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Gateway WARN: failed to close ({key}) connection. Reason: {ex.Message}");
+                    Console.WriteLine($"Gateway WARN: evection failed to close ({key}) connection. Reason: {ex.Message}");
                 }
-                Console.WriteLine($"{key} was evicted for {reason}.");
+
+                Console.WriteLine($"Gateway SUCCESS: evection of ({key}) for ({reason})");
 
                 DecrementDeviceConnected();
             }
