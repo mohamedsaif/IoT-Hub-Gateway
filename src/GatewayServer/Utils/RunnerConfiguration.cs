@@ -14,7 +14,7 @@ namespace GatewayServer.Utils
         public bool IsCacheEnabled { get; set; }
         public string? TestDeviceId { get; set; }
         public int CacheExpireationWindowSeconds { get; set; }
-        public MemoryCacheEntryOptions CacheOptions { get; set; }
+        public MemoryCacheEntryOptions? CacheOptions { get; private set; }
         public void EnsureIsValid()
         {
             var numberOfConnectionSettings = 0;
@@ -37,7 +37,7 @@ namespace GatewayServer.Utils
             config.CacheExpireationWindowSeconds = configuration.GetValue<int?>(nameof(CacheExpireationWindowSeconds))?? 600;
             config.CacheOptions = new MemoryCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(config.CacheExpireationWindowSeconds)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(config.CacheExpireationWindowSeconds)
                 //SlidingExpiration = TimeSpan.FromSeconds(config.CacheExpireationWindowSeconds)
             };
             config.CacheOptions.RegisterPostEvictionCallback(RunnerStatusManager.OnPostEviction);

@@ -75,7 +75,12 @@ namespace GatewayServer.Services
                 if(config.IsCacheEnabled)
                 {
                     cache.Set<DeviceClient>(deviceId, device, config.CacheOptions);
+                    Console.WriteLine($"Gateway CACHE: added to cache ({deviceId})");
                 }
+            }
+            else
+            {
+                //Console.WriteLine($"Gateway CACHE: loaded from cache ({deviceId})");
             }
 
             return new IoTHubSender(device, deviceId, config);

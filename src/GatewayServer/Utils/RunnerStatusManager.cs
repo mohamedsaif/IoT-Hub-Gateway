@@ -11,7 +11,7 @@ namespace GatewayServer.Utils
 {
     public static class RunnerStatusManager
     {
-        const long ReportRate = 100;
+        const long ReportRate = 1000;
         
         public static RunnerStatus RunnerSavedState { get; }
 
@@ -87,10 +87,10 @@ namespace GatewayServer.Utils
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Gateway WARN: evection failed to close ({key}) connection. Reason: {ex.Message}");
+                    Console.WriteLine($"Gateway CACHE: evection failed to close ({key}) connection. Reason: {ex.Message}");
                 }
 
-                Console.WriteLine($"Gateway SUCCESS: evection of ({key}) for ({reason})");
+                Console.WriteLine($"Gateway CACHE: evection success of ({key}) for ({reason})");
 
                 DecrementDeviceConnected();
             }
