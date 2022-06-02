@@ -23,13 +23,17 @@ spec:
     spec:
       containers:
       - name: gateway-server
-        image: REPLACE.azurecr.io/iothub/gateway-server:latest
-        imagePullPolicy: Always
+        # image: REPLACE.azurecr.io/iothub/gateway-server:latest
+        # imagePullPolicy: Always
+        image: REPLACE.azurecr.io/iothub/gateway-server:REPLACE
+        imagePullPolicy: IfNotPresent
         env:
         - name: IsCacheEnabled
           value: "true"
         - name: "CacheExpireationWindowSeconds"
           value: "600"
+        - name: IsSuccessLogsEnabled
+          value: "false"
         - name: TestDeviceId
           value: ""
         - name: DAPR_HTTP_PORT

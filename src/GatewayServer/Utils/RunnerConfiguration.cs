@@ -15,6 +15,7 @@ namespace GatewayServer.Utils
         public string? TestDeviceId { get; set; }
         public int CacheExpireationWindowSeconds { get; set; }
         public MemoryCacheEntryOptions? CacheOptions { get; private set; }
+        public bool IsSuccessLogsEnabled { get; set; } = false;
         public void EnsureIsValid()
         {
             var numberOfConnectionSettings = 0;
@@ -41,7 +42,7 @@ namespace GatewayServer.Utils
                 //SlidingExpiration = TimeSpan.FromSeconds(config.CacheExpireationWindowSeconds)
             };
             config.CacheOptions.RegisterPostEvictionCallback(RunnerStatusManager.OnPostEviction);
-
+            config.IsSuccessLogsEnabled = configuration.GetValue<bool?>(nameof(IsSuccessLogsEnabled)) ?? false;
             return config;
         }
     }

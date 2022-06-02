@@ -69,7 +69,8 @@ namespace GatewayServer.Controllers
                 //logger.LogInformation($"Gateway: started for {deviceId}");
                 var deviceFactory = new DeviceFactory(deviceId, runnerConfigs, daprClient, cache);
                 await deviceFactory.Device.Sender.SendMessageAsync(payload.ToString(), CancellationToken.None);
-                logger.LogInformation($"Gateway SUCCESS: Device ({deviceId}) message sent");
+                if(runnerConfigs.IsSuccessLogsEnabled)
+                    logger.LogInformation($"Gateway SUCCESS: Device ({deviceId}) message sent");
                 return Ok();
             }
             catch (Exception ex)

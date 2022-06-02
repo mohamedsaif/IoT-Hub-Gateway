@@ -20,6 +20,7 @@ data:
       "ServerOptions": {
         "ServiceBusName": "gateway-servicebus",
         "ServiceBusTopic": "d2c-messages",
-        "EntityIdAttributeName": "structure.id"
+        "EntityIdAttributeName": "structure.id",
+        "IsSuccessLogsEnabled": "false"
       }
     }

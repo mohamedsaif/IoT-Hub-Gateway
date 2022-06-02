@@ -11,7 +11,7 @@ namespace GatewayServer.Utils
 {
     public static class RunnerStatusManager
     {
-        const long ReportRate = 1000;
+        const long ReportRate = 10000;
         
         public static RunnerStatus RunnerSavedState { get; }
 

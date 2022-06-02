@@ -47,10 +47,10 @@ namespace GatewayOrchestrator.Controllers
         public async Task<IActionResult> ProcessRequest(string targetPlatform, [FromBody] dynamic payload)
         {
             if (string.IsNullOrEmpty(targetPlatform))
-                return (ActionResult)new BadRequestObjectResult("Invalid request parameters");
+                return (ActionResult)new BadRequestObjectResult("Orchestrator ERROR: Invalid request parameters");
 
             if (payload is null)
-                return (ActionResult)new BadRequestObjectResult("Invalid request payload");
+                return (ActionResult)new BadRequestObjectResult("Orchestrator ERROR: Invalid request payload");
 
             
             switch (targetPlatform)
@@ -61,16 +61,27 @@ namespace GatewayOrchestrator.Controllers
                     var idToken = message.SelectToken(serverOptions.EntityIdAttributeName);
                     string deviceId = idToken != null ? idToken.Value<string>() : string.Empty;
                     if (string.IsNullOrEmpty(deviceId))
-                        throw new ArgumentException($"Invalid payload due to no id at ({serverOptions.EntityIdAttributeName})");
+                        throw new ArgumentException($"Orchestrator ERROR: Invalid payload due to no id at ({serverOptions.EntityIdAttributeName})");
+                    try
+                    {
+                        var messageJson = JsonConvert.SerializeObject(message);
+                        await daprClient.PublishEventAsync<string>(serverOptions.ServiceBusName, serverOptions.ServiceBusTopic, messageJson);
+                        if (serverOptions.IsSuccessLogsEnabled)
+                            logger.LogInformation($"Orchestrator SUCCESS: Proccessed device ({deviceId}) message");
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError($"Orchestrator ERROR: failed to ingest message for ({deviceId}) due to ({ex.Message})");
+                        return (ActionResult)new UnprocessableEntityObjectResult("Orchestrator ERROR: failed to ingest message");
+                    }
 
-                    var messageJson = JsonConvert.SerializeObject(message);
-                    await daprClient.PublishEventAsync<string>(serverOptions.ServiceBusName, serverOptions.ServiceBusTopic, messageJson);
-                    logger.LogInformation($"Orchestrator SUCCESS: Proccessed device ({deviceId}) message");
+
+                    
                     break;
                 //case "AnotherTargetSystem":
                     //TODO: add business logic to handle publishing to the relevant bus
                 default:
-                    throw new ArgumentException("Input target platform");
+                    throw new ArgumentException("Orchestrator ERROR: Input target platform");
             }
             
             

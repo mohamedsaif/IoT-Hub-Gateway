@@ -27,5 +27,10 @@ namespace GatewayOrchestrator
         /// The entity id json path
         /// </summary>
         public string EntityIdAttributeName { get; set; }
+
+        /// <summary>
+        /// Flag to indicate if successful operations should be logged
+        /// </summary>
+        public bool IsSuccessLogsEnabled { get; set; } = false;
     }
 }

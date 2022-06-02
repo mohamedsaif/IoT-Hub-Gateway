@@ -63,7 +63,7 @@ namespace GatewayTranslator.Controllers
                         throw new ArgumentException($"Invalid device due to no id at ({serverOptions.EntityIdAttributeName})");
                     }
 
-                    logger.LogInformation($"Translator: started for {deviceId}");
+                    //logger.LogInformation($"Translator: started for {deviceId}");
                     var messageJsonString = JsonConvert.SerializeObject(message);
                     var payload = new StringContent(messageJsonString, Encoding.UTF8, "application/json");
                     var gatewayHost = serverOptions.GatewayServerHost;
@@ -71,7 +71,8 @@ namespace GatewayTranslator.Controllers
 
                     if(serverOptions.SimulationMode)
                     {
-                        logger.LogInformation($"Translator SUCCESS: completed SIMULATION successfully for: {deviceId}");
+                        if(serverOptions.IsSuccessLogsEnabled)
+                            logger.LogInformation($"Translator SUCCESS: completed SIMULATION successfully for: {deviceId}");
                         return new OkObjectResult(new { Message = $"Message simlation posted successfully for: {deviceId}" });
                     }
 
@@ -85,13 +86,15 @@ namespace GatewayTranslator.Controllers
                             logger.LogError($"Translator ERROR: failed to post message to Server for ({deviceId})");
                             throw new ApplicationException($"Failed to process message from IoT Hub Gateway. ERROR: {result.StatusCode}||{serverResponse}");
                         }
-                        logger.LogInformation($"Translator SUCCESS: completed successfully for: {deviceId}");
+
+                        if (serverOptions.IsSuccessLogsEnabled)
+                            logger.LogInformation($"Translator SUCCESS: completed successfully for: {deviceId}");
                         return new OkObjectResult("Message posted successfully");
                     }
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError($"Translator ERROR: Failed to process message from IoT Hub Gateway. Device: {deviceId} with error ({ex.Message}: {ex.StackTrace}");
+                    logger.LogError($"Translator ERROR: IoT Hub Gateway Server call failed for Device ({deviceId}) with error ({ex.Message}||{ex.StackTrace}");
                     throw;
                 }
             }
