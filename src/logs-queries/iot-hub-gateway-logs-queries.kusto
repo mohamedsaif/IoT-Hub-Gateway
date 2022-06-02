@@ -1,0 +1,25 @@
+// Gateway Server logs
+
+let FindString = "Gateway SUCCESS";
+ContainerLog 
+| where LogEntry has FindString 
+| order by TimeGenerated desc 
+|take 100
+
+let FindString = "Gateway ERROR";
+ContainerLog 
+| where LogEntry has FindString 
+| order by TimeGenerated desc 
+|take 100
+
+let FindString = "Gateway CACHE: added";
+ContainerLog 
+| where LogEntry has FindString 
+| order by TimeGenerated desc 
+|take 100
+
+let FindString = "Gateway CACHE: evection";
+ContainerLog 
+| where LogEntry has FindString 
+| order by TimeGenerated desc 
+|take 100
