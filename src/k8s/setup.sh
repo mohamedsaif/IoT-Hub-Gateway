@@ -114,7 +114,7 @@ kubectl get pod,svc -n iot-hub-gateway
 kubectl port-forward service/gateway-server-http-service 8082:80 -n iot-hub-gateway
 curl -i http://localhost:8082/healthz
 curl -i http://localhost:8082/health-details
-
+curl -i http://localhost:8082/api/gateway/status
 # Useful commands
 # Restart the deployment
 kubectl rollout restart deployment -n iot-hub-gateway gateway-server-http-deployment
