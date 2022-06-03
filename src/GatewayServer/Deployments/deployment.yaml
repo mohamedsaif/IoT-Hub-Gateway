@@ -20,6 +20,10 @@ spec:
         dapr.io/app-id: "gateway-server"
         dapr.io/app-port: "80"
         dapr.io/config: "tracing"
+        dapr.io/sidecar-cpu-limit: 300m
+        dapr.io/sidecar-memory-limit: 1000Mi
+        dapr.io/sidecar-cpu-request: 100m
+        dapr.io/sidecar-memory-request: 250Mi
     spec:
       containers:
       - name: gateway-server

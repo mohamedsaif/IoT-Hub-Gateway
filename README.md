@@ -244,13 +244,21 @@ It is useful to have zipkin installed to provide in cluster distributed tracing 
 
 ```bash
 
-kubectl create deployment zipkin --image openzipkin/zipkin:2.23 -n dapr-system
-kubectl expose deployment zipkin --type ClusterIP --port 9411 -n dapr-system
+# As per the best practice, import zipkin image to ACR 
+# (to have available locally to AKS and also benefit from container scanning if Microsoft Defender is enabled)
+ACR_NAME=REPLACE
+az acr import -n $ACR_NAME --source ghcr.io/openzipkin/zipkin -t openzipkin/zipkin:2.23 -t openzipkin/zipkin:latest --force
+
+kubectl create deployment -n dapr-system zipkin --image $ACR_NAME.azurecr.io/openzipkin/zipkin:2.23
+kubectl expose deployment -n dapr-system zipkin --type ClusterIP --port 9411
 
 kubectl port-forward service/zipkin 8083:9411 -n dapr-system
 
 # Opening the below url in the borwser you should zipkin dashboard
 echo http://localhost:8083
+
+# For production and high traffic scenarios, increase the zipkin replicas
+kubectl scale deployment -n dapr-system zipkin --replicas 3
 
 ```
 
@@ -275,7 +283,6 @@ Included in the project a Postman template that can be imported for sample reque
 If there is issues with the deployments, these commands might be helpful in figuring out the root causes:
 
 ```bash
-
 
 # Check the deployed resources
 kubectl get all -n iot-hub-gateway
