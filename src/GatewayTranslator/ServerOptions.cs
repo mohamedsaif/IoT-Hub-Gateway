@@ -23,6 +23,8 @@ namespace GatewayTranslator
         /// </summary>
         public string GatewayServerHost { get; set; }
 
+        public string GatewayServerHealthEndpoint { get; set; }
+
         /// <summary>
         /// The service bus name that will be used by dapr
         /// </summary>
@@ -37,6 +39,11 @@ namespace GatewayTranslator
         /// Set the location of the entity id in the target json payload
         /// </summary>
         public string EntityIdAttributeName { get; set; } = "id";
+
+        /// <summary>
+        /// Flag to indicate if successful operations should be logged
+        /// </summary>
+        public bool IsSuccessLogsEnabled { get; set; } = false;
 
     }
 }

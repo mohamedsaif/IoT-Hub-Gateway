@@ -1,6 +1,8 @@
+using GatewayServer.Controllers;
 using GatewayServer.Models;
 using GatewayServer.Repositories;
 using GatewayServer.Utils;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Caching.Distributed;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,10 +32,14 @@ builder.Services.AddDaprClient(builder => builder
 var runnerConfigs = RunnerConfiguration.Load(builder.Configuration);
 builder.Services.AddSingleton<RunnerConfiguration>(runnerConfigs);
 
-var runnerStats = new RunnerStats();
-builder.Services.AddSingleton<RunnerStats>(runnerStats);
+//Adding in-memory cache support
+builder.Services.AddMemoryCache();
+
+builder.Services.AddHealthChecks()
+    .AddTypeActivatedCheck<ServiceHealthCheck>("default", args: new object[] { runnerConfigs });
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -41,6 +47,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapHealthChecks("/healthz");
+
+app.MapHealthChecks("/health-details", new HealthCheckOptions
+{
+    ResponseWriter = ServiceHealthCheck.WriteResponse
+});
 
 app.UseAuthorization();
 

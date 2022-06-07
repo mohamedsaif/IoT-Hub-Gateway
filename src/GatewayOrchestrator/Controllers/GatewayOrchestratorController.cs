@@ -16,7 +16,7 @@ namespace GatewayOrchestrator.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GatewayOrchestratorController : ControllerBase, IHealthCheck
+    public class GatewayOrchestratorController : ControllerBase
     {
         private DaprClient daprClient;
         private ILogger<GatewayOrchestratorController> logger;
@@ -31,17 +31,10 @@ namespace GatewayOrchestrator.Controllers
         }
 
         [HttpGet]
-        public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult(HealthCheckResult.Healthy(
-                JsonConvert.SerializeObject(new { Message = $"Service running version ({serverOptions.AppVersion})" })));
-        }
-
-        [HttpGet]
         [Route("version")]
         public async Task<IActionResult> GetVersion()
         {
-            return Ok(new { Message = $"Service running version ({serverOptions.AppVersion})" });
+            return await Task.FromResult<IActionResult>(new ObjectResult(new { Version = serverOptions.AppVersion, EntityIdPath = serverOptions.EntityIdAttributeName }));
         }
 
         /// <summary>
@@ -53,13 +46,11 @@ namespace GatewayOrchestrator.Controllers
         [HttpPost("{targetPlatform}")]
         public async Task<IActionResult> ProcessRequest(string targetPlatform, [FromBody] dynamic payload)
         {
-            logger.LogInformation("GatewayOrchestrator: HTTP trigger starting a request.");
-
             if (string.IsNullOrEmpty(targetPlatform))
-                return (ActionResult)new BadRequestObjectResult("Invalid request parameters");
+                return (ActionResult)new BadRequestObjectResult("Orchestrator ERROR: Invalid request parameters");
 
             if (payload is null)
-                return (ActionResult)new BadRequestObjectResult("Invalid request payload");
+                return (ActionResult)new BadRequestObjectResult("Orchestrator ERROR: Invalid request payload");
 
             
             switch (targetPlatform)
@@ -70,16 +61,27 @@ namespace GatewayOrchestrator.Controllers
                     var idToken = message.SelectToken(serverOptions.EntityIdAttributeName);
                     string deviceId = idToken != null ? idToken.Value<string>() : string.Empty;
                     if (string.IsNullOrEmpty(deviceId))
-                        throw new ArgumentException($"Invalid payload due to no id at ({serverOptions.EntityIdAttributeName})");
+                        throw new ArgumentException($"Orchestrator ERROR: Invalid payload due to no id at ({serverOptions.EntityIdAttributeName})");
+                    try
+                    {
+                        var messageJson = JsonConvert.SerializeObject(message);
+                        await daprClient.PublishEventAsync<string>(serverOptions.ServiceBusName, serverOptions.ServiceBusTopic, messageJson);
+                        if (serverOptions.IsSuccessLogsEnabled)
+                            logger.LogInformation($"Orchestrator SUCCESS: Proccessed device ({deviceId}) message");
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError($"Orchestrator ERROR: failed to ingest message for ({deviceId}) due to ({ex.Message})");
+                        return (ActionResult)new UnprocessableEntityObjectResult("Orchestrator ERROR: failed to ingest message");
+                    }
 
-                    var messageJson = JsonConvert.SerializeObject(message);
-                    await daprClient.PublishEventAsync<string>(serverOptions.ServiceBusName, serverOptions.ServiceBusTopic, messageJson);
-                    logger.LogInformation($"GatewayOrchestrator: HTTP trigger completed a DEVICE request for enitityId: ({deviceId})");
+
+                    
                     break;
                 //case "AnotherTargetSystem":
                     //TODO: add business logic to handle publishing to the relevant bus
                 default:
-                    throw new ArgumentException("Input target platform");
+                    throw new ArgumentException("Orchestrator ERROR: Input target platform");
             }
             
             

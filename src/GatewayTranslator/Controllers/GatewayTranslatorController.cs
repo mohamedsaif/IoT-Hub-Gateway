@@ -19,7 +19,7 @@ namespace GatewayTranslator.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class GatewayTranslatorController : ControllerBase, IHealthCheck
+    public class GatewayTranslatorController : ControllerBase
     {
         private DaprClient daprClient;
         private IHttpClientFactory httpClientFactory;
@@ -35,18 +35,10 @@ namespace GatewayTranslator.Controllers
         }
 
         [HttpGet]
-        public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult(HealthCheckResult.Healthy(JsonConvert.SerializeObject(
-                new { Message = $"Service running version ({serverOptions.AppVersion})" }
-                )));
-        }
-
-        [HttpGet]
         [Route("Version")]
         public async Task<IActionResult> GetVersion()
         {
-            return Ok(new { Message = $"Service is running version ({serverOptions.AppVersion}) and Simulation Mode is ({serverOptions.SimulationMode})" });
+            return await Task.FromResult<IActionResult>(Ok(new { Message = $"Service is running version ({serverOptions.AppVersion}) and Simulation Mode is ({serverOptions.SimulationMode})" }));
         }
 
         [HttpPost]
@@ -54,9 +46,9 @@ namespace GatewayTranslator.Controllers
         [Topic("gateway-servicebus", "d2c-messages")]
         public async Task<ActionResult> ProcessMessage(dynamic d2cMessage)
         {
-            logger.LogInformation($"SB triggered Gateway Translator for {d2cMessage}");
             var d2cMessageString = d2cMessage.ToString();
             var isValidMessage = IsMessageValid(d2cMessageString);
+            string deviceId = null;
 
             if (isValidMessage)
             {
@@ -64,10 +56,14 @@ namespace GatewayTranslator.Controllers
                 {
                     JObject message = JObject.Parse(d2cMessageString);
                     var idToken = message.SelectToken(serverOptions.EntityIdAttributeName);
-                    string deviceId = idToken != null ? idToken.Value<string>() : string.Empty;
+                    deviceId = idToken != null ? idToken.Value<string>() : string.Empty;
                     if (string.IsNullOrEmpty(deviceId))
-                        throw new ArgumentException($"Invalid payload due to no id at ({serverOptions.EntityIdAttributeName})");
-                    
+                    {
+                        logger.LogError($"Translator ERROR: Missing device id ({deviceId})");
+                        throw new ArgumentException($"Invalid device due to no id at ({serverOptions.EntityIdAttributeName})");
+                    }
+
+                    //logger.LogInformation($"Translator: started for {deviceId}");
                     var messageJsonString = JsonConvert.SerializeObject(message);
                     var payload = new StringContent(messageJsonString, Encoding.UTF8, "application/json");
                     var gatewayHost = serverOptions.GatewayServerHost;
@@ -75,8 +71,9 @@ namespace GatewayTranslator.Controllers
 
                     if(serverOptions.SimulationMode)
                     {
-                        logger.LogInformation($"SB triggered Gateway Translator completed SIMULATION successfully for: {d2cMessage}");
-                        return new OkObjectResult(new { Message = "Message simlation posted successfully" });
+                        if(serverOptions.IsSuccessLogsEnabled)
+                            logger.LogInformation($"Translator SUCCESS: completed SIMULATION successfully for: {deviceId}");
+                        return new OkObjectResult(new { Message = $"Message simlation posted successfully for: {deviceId}" });
                     }
 
                     using (var httpClient = httpClientFactory.CreateClient())
@@ -86,21 +83,25 @@ namespace GatewayTranslator.Controllers
                         if (result.StatusCode != System.Net.HttpStatusCode.OK)
                         {
                             string serverResponse = await result.Content.ReadAsStringAsync();
-                            throw new ApplicationException($"Failed to process message from IoT Hub Gateway. Payload: {d2cMessage}. ERROR: {result.StatusCode}||{serverResponse}");
+                            logger.LogError($"Translator ERROR: failed to post message to Server for ({deviceId})");
+                            throw new ApplicationException($"Failed to process message from IoT Hub Gateway. ERROR: {result.StatusCode}||{serverResponse}");
                         }
-                        logger.LogInformation($"SB triggered Gateway Translator completed successfully for: {d2cMessage}");
+
+                        if (serverOptions.IsSuccessLogsEnabled)
+                            logger.LogInformation($"Translator SUCCESS: completed successfully for: {deviceId}");
                         return new OkObjectResult("Message posted successfully");
                     }
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError($"gateway-translator Failed to process message from IoT Hub Gateway. Payload: {d2cMessage} with error ({ex.Message}: {ex.StackTrace}");
+                    logger.LogError($"Translator ERROR: IoT Hub Gateway Server call failed for Device ({deviceId}) with error ({ex.Message}||{ex.StackTrace}");
                     throw;
                 }
             }
             else
             {
                 //invalid messages handling here
+                logger.LogError($"Translator ERROR: Incorrect format");
                 throw new ArgumentException("Message is not in correct format");
             }
         }

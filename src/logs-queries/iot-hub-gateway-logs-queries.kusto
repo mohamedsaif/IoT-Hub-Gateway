@@ -1,0 +1,61 @@
+///////////////////////////////
+// Gateway Orchestrator logs //
+///////////////////////////////
+// Available if (IsSuccessLogsEnabled = true) - default is false
+let FindString = "Orchestrator SUCCESS";
+ContainerLog 
+| where LogEntry has FindString 
+| order by TimeGenerated desc 
+|take 100
+
+let FindString = "Orchestrator ERROR";
+ContainerLog 
+| where LogEntry has FindString 
+| order by TimeGenerated desc 
+|take 100
+
+/////////////////////////////
+// Gateway Translator logs //
+/////////////////////////////
+
+// Available if (IsSuccessLogsEnabled = true) - default is false
+let FindString = "Translator SUCCESS";
+ContainerLog 
+| where LogEntry has FindString 
+| order by TimeGenerated desc 
+|take 100
+
+let FindString = "Translator ERROR";
+ContainerLog 
+| where LogEntry has FindString 
+| order by TimeGenerated desc 
+|take 100
+
+/////////////////////////
+// Gateway Server logs //
+/////////////////////////
+
+// Available if (IsSuccessLogsEnabled = true) - default is false
+let FindString = "Gateway SUCCESS";
+ContainerLog 
+| where LogEntry has FindString 
+| order by TimeGenerated desc 
+|take 100
+
+let FindString = "Gateway ERROR";
+ContainerLog 
+| where LogEntry has FindString 
+| order by TimeGenerated desc 
+|take 100
+
+let FindString = "Gateway CACHE: added";
+ContainerLog 
+| where LogEntry has FindString 
+| order by TimeGenerated desc 
+|take 100
+
+let FindString = "Gateway CACHE: evection";
+ContainerLog 
+| where LogEntry has FindString 
+| order by TimeGenerated desc 
+|take 100

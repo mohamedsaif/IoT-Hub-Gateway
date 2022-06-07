@@ -1,0 +1,13 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+ name: gateway-orchestrator-http-deployment-cpu-hpa
+ namespace: iot-hub-gateway
+spec:
+ scaleTargetRef:
+   apiVersion: apps/v1
+   kind: Deployment
+   name: gateway-orchestrator-http-deployment
+ minReplicas: 3
+ maxReplicas: 6
+ targetCPUUtilizationPercentage: 50

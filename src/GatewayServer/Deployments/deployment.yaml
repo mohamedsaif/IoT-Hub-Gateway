@@ -20,14 +20,26 @@ spec:
         dapr.io/app-id: "gateway-server"
         dapr.io/app-port: "80"
         dapr.io/config: "tracing"
+        dapr.io/sidecar-cpu-limit: 300m
+        dapr.io/sidecar-memory-limit: 1000Mi
+        dapr.io/sidecar-cpu-request: 100m
+        dapr.io/sidecar-memory-request: 250Mi
     spec:
       containers:
       - name: gateway-server
-        image: REPLACE.azurecr.io/iothub/gateway-server:latest
-        imagePullPolicy: Always
+        # image: REPLACE.azurecr.io/iothub/gateway-server:latest
+        # imagePullPolicy: Always
+        image: REPLACE.azurecr.io/iothub/gateway-server:REPLACE
+        imagePullPolicy: IfNotPresent
         env:
         - name: IsCacheEnabled
+          value: "true"
+        - name: "CacheExpireationWindowSeconds"
+          value: "600"
+        - name: "IsSuccessLogsEnabled"
           value: "false"
+        - name: TestDeviceId
+          value: ""
         - name: DAPR_HTTP_PORT
           value: "3600"
         - name: DAPR_GRPC_PORT
@@ -41,20 +53,20 @@ spec:
         - containerPort: 80
         readinessProbe:
           httpGet:
-            path: /api/gateway
+            path: /healthz
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 5
         livenessProbe:
           httpGet:
-            path: /api/gateway
+            path: /healthz
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 5
         resources:
             limits:
-              memory: 4Gi
-              cpu: 1000m
+              memory: 6Gi
+              cpu: 3000m
             requests:
               memory: 2Gi
               cpu: 500m

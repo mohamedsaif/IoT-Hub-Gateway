@@ -1,5 +1,7 @@
 using GatewayTranslator.Controllers;
+using GatewayTranslator.Utils;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
@@ -45,7 +47,7 @@ namespace GatewayTranslator
             services.AddHttpClient();
 
             services.AddHealthChecks()
-                .AddCheck<GatewayTranslatorController>("DefaultHealth");
+                .AddTypeActivatedCheck<ServiceHealthCheck>("default", args: new object[] { options.GatewayServerHealthEndpoint });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,7 +74,11 @@ namespace GatewayTranslator
                 endpoints.MapControllers();
                 // Required by dapr pub/sub
                 endpoints.MapSubscribeHandler();
-                endpoints.MapHealthChecks("/health");
+                endpoints.MapHealthChecks("/healthz");
+                endpoints.MapHealthChecks("/health-details", new HealthCheckOptions
+                {
+                    ResponseWriter = ServiceHealthCheck.WriteResponse
+                });
             });
         }
 

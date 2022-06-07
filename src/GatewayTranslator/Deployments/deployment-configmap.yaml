@@ -17,6 +17,7 @@ data:
         "AppVersion": "V1.0",
         "SimulationMode": false,
         "GatewayServerHost": "http://localhost:3500/v1.0/invoke/gateway-server/method/api/gateway",
+        "GatewayServerHealthEndpoint": "http://localhost:3500/v1.0/invoke/gateway-server/method/healthz",
         "ServiceBusName": "gateway-servicebus",
         "ServiceBusTopic": "d2c-messages",
         "EntityIdAttributeName": "structure.id"

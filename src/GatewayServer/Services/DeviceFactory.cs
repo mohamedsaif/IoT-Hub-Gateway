@@ -2,6 +2,7 @@
 using GatewayServer.Models;
 using GatewayServer.Utils;
 using Microsoft.Azure.Devices.Client;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,15 +14,16 @@ namespace GatewayServer.Services
     public class DeviceFactory
     {
         private DaprClient daprClient;
-        private RunnerStats runnerStats;
         private const string DAPR_STORE_NAME = "devicestore";
 
         public CloudDevice Device { get; }
 
-        public DeviceFactory(string deviceId, RunnerConfiguration config, DaprClient daprClient, RunnerStats runnerStats)
+        private IMemoryCache cache;
+
+        public DeviceFactory(string deviceId, RunnerConfiguration config, DaprClient daprClient, IMemoryCache cache)
         {
             this.daprClient = daprClient;
-            this.runnerStats = runnerStats;
+            this.cache = cache;
             Device = (this.Create(deviceId, config)).Result;
         }
 
@@ -47,11 +49,7 @@ namespace GatewayServer.Services
             //Check if cache is enabled
             if (config.IsCacheEnabled)
             {
-                var deviceCache = await daprClient.GetStateEntryAsync<DeviceClient>(DAPR_STORE_NAME, deviceId);
-                if(deviceCache != null)
-                {
-                    device = deviceCache.Value;
-                }
+                device = cache.Get<DeviceClient>(deviceId);
             }
 
             if (device == null)
@@ -62,22 +60,27 @@ namespace GatewayServer.Services
                     deviceId,
                     new ITransportSettings[]
                     {
-                    new AmqpTransportSettings(Microsoft.Azure.Devices.Client.TransportType.Amqp_Tcp_Only)
-                    {
-                        AmqpConnectionPoolSettings = new AmqpConnectionPoolSettings()
+                        new AmqpTransportSettings(Microsoft.Azure.Devices.Client.TransportType.Amqp_Tcp_Only)
                         {
-                            Pooling = true,
+                            AmqpConnectionPoolSettings = new AmqpConnectionPoolSettings()
+                            {
+                                Pooling = true,
+                            }
                         }
-                    }
                     });
 
-                runnerStats.IncrementDeviceConnected();
+                RunnerStatusManager.IncrementDeviceConnected();
 
                 //Cache the device
                 if(config.IsCacheEnabled)
                 {
-                    await daprClient.SaveStateAsync<DeviceClient>(DAPR_STORE_NAME, deviceId, device);
+                    cache.Set<DeviceClient>(deviceId, device, config.CacheOptions);
+                    Console.WriteLine($"Gateway CACHE: added to cache ({deviceId})");
                 }
+            }
+            else
+            {
+                //Console.WriteLine($"Gateway CACHE: loaded from cache ({deviceId})");
             }
 
             return new IoTHubSender(device, deviceId, config);
