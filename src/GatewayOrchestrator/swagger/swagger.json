@@ -1,0 +1,57 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Gateway Orchestrator",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/GatewayOrchestrator/version": {
+      "get": {
+        "tags": [
+          "GatewayOrchestrator"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/GatewayOrchestrator/{targetPlatform}": {
+      "post": {
+        "tags": [
+          "GatewayOrchestrator"
+        ],
+        "parameters": [
+          {
+            "name": "targetPlatform",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { }
+            },
+            "text/json": {
+              "schema": { }
+            },
+            "application/*+json": {
+              "schema": { }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": { }
+}
