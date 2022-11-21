@@ -9,10 +9,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Extensions;
+using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace GatewayOrchestrator
@@ -56,6 +61,7 @@ namespace GatewayOrchestrator
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Gateway Orchestrator v1"));
+                
             }
 
             app.UseRouting();
@@ -74,6 +80,16 @@ namespace GatewayOrchestrator
                     ResponseWriter = ServiceHealthCheck.WriteResponse
                 });
             });
+
+            if(env.IsDevelopment())
+            {
+                ISwaggerProvider sw = (ISwaggerProvider)app.ApplicationServices.GetService(typeof(ISwaggerProvider));
+                OpenApiDocument doc = sw.GetSwagger("v1");
+                var output = doc.SerializeAsJson(OpenApiSpecVersion.OpenApi3_0);
+                string openApiSpecsFolder = Path.Combine(Directory.GetCurrentDirectory(), "OpenApiSpecs");
+                string swaggerFile = Path.Combine(openApiSpecsFolder, "swagger.json");
+                File.WriteAllText(swaggerFile, output);
+            }
         }
 
         private void RegisterAppInsights(IServiceCollection services)

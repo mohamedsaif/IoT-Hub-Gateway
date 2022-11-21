@@ -48,7 +48,7 @@ helm repo update
 helm search repo kedacore --devel --versions
 
 helm upgrade --install keda kedacore/keda \
---version=2.7.2 \
+--version=2.8.2 \
 --namespace keda \
 --create-namespace \
 --wait
@@ -138,7 +138,7 @@ helm repo update
 helm search repo dapr --devel --versions
 
 helm upgrade --install dapr dapr/dapr \
---version=1.7.3 \
+--version=1.8.4 \
 --namespace dapr-system \
 --create-namespace \
 --set global.ha.enabled=true \

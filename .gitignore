@@ -421,3 +421,4 @@ src/GatewayServer/Properties/ServiceDependencies/local/appInsights1.arm.json
 
 **/*-local*
 res/load-test-results.jpg
+src/azure-load-test/IoT-Hub-Gateway-Load-Test-APIM-KV.jmx
