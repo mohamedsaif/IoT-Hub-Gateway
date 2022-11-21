@@ -20,7 +20,7 @@
 		<Folder Include="OpenApiSpecs\" />
 	</ItemGroup>
 
-	<Target Name="SwaggerToFile" AfterTargets="AfterBuild">
+	<!-- <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
 		<Exec Command="swagger tofile &#45;-host http://example.com &#45;-output  &quot;$(TargetDir)\swagger.json&quot; &quot;$(TargetPath)&quot; &quot;v1&quot;" />
-	</Target>
+	</Target> -->
 </Project>
